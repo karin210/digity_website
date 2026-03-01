@@ -4,6 +4,7 @@ import { ref, computed } from "vue";
 const activeTab = ref("todas");
 const selectedBusiness = ref("");
 const businessTypeQuery = ref("");
+const selectedIndustry = ref("");
 
 const businessTypes = [
   "Restaurantes",
@@ -38,6 +39,52 @@ const businessTypes = [
   "Coworking",
   "Otro",
 ];
+
+const industries = [
+  { id: "alimentos", name: "Alimentos y hospitalidad", icon: "🍽️" },
+  { id: "belleza", name: "Belleza y bienestar", icon: "💇" },
+  { id: "salud", name: "Salud", icon: "🏥" },
+  { id: "profesional", name: "Servicios profesionales", icon: "💼" },
+  { id: "comercio", name: "Comercio y retail", icon: "🛍️" },
+  { id: "industrial", name: "Industrial y construcción", icon: "🏗️" },
+  { id: "eventos", name: "Eventos y creativos", icon: "🎉" },
+  { id: "movilidad", name: "Movilidad y viajes", icon: "🚗" },
+  { id: "mas", name: "Otros", icon: "✨" },
+];
+
+const businessIndustryMap = {
+  Restaurantes: "alimentos",
+  Hoteles: "alimentos",
+  Café: "alimentos",
+  Barbería: "belleza",
+  "Salón de belleza": "belleza",
+  Gimnasio: "belleza",
+  Farmacia: "salud",
+  "Clínica dental": "salud",
+  Hospital: "salud",
+  Laboratorio: "salud",
+  Veterinaria: "salud",
+  "Despacho de abogados": "profesional",
+  Consultora: "profesional",
+  "Firma de contabilidad": "profesional",
+  "Firma de auditoría": "profesional",
+  "Agencia inmobiliaria": "profesional",
+  Coworking: "profesional",
+  Supermercado: "comercio",
+  Tienda: "comercio",
+  "Boutique de moda": "comercio",
+  Ferretería: "comercio",
+  Imprenta: "comercio",
+  "Servicios automotrices": "industrial",
+  Constructora: "industrial",
+  "Reparación de electrónicos": "industrial",
+  "Venta de autos": "movilidad",
+  "Agencia de viajes": "movilidad",
+  "Salón de eventos": "eventos",
+  "Planeación de eventos": "eventos",
+  "Estudio de Fotografía": "eventos",
+  Otro: "mas",
+};
 
 const allServices = [
   {
@@ -190,9 +237,14 @@ const allServices = [
 const filteredBusinessTypes = computed(() => {
   const query = businessTypeQuery.value.trim().toLowerCase();
 
-  if (!query) return businessTypes;
+  return businessTypes.filter((biz) => {
+    const matchesQuery = !query || biz.toLowerCase().includes(query);
+    const matchesIndustry =
+      !selectedIndustry.value ||
+      businessIndustryMap[biz] === selectedIndustry.value;
 
-  return businessTypes.filter((biz) => biz.toLowerCase().includes(query));
+    return matchesQuery && matchesIndustry;
+  });
 });
 
 const displayedServices = computed(() => {
@@ -263,7 +315,38 @@ const displayedServices = computed(() => {
               type="text"
               placeholder="Ejemplo: Restaurante, Barbería o Clínica dental"
             />
-            <p class="filter__hint">También puedes filtrar por industria:</p>
+            <p class="filter__hint">
+              También puedes buscar tu tipo de negocio por industria
+            </p>
+            <div
+              class="industry-filter"
+              role="list"
+              aria-label="Filtrar por industria"
+            >
+              <button
+                :class="[
+                  'industry-chip',
+                  { 'industry-chip--active': selectedIndustry === '' },
+                ]"
+                @click="selectedIndustry = ''"
+              >
+                <span class="industry-chip__icon">🧩</span>
+                <span class="industry-chip__label">Todas</span>
+              </button>
+              <button
+                v-for="industry in industries"
+                :key="industry.id"
+                :class="[
+                  'industry-chip',
+                  { 'industry-chip--active': selectedIndustry === industry.id },
+                ]"
+                @click="selectedIndustry = industry.id"
+              >
+                <span class="industry-chip__icon">{{ industry.icon }}</span>
+                <span class="industry-chip__label">{{ industry.name }}</span>
+              </button>
+            </div>
+
             <div class="filter-options">
               <button
                 v-for="biz in filteredBusinessTypes"
@@ -327,7 +410,7 @@ const displayedServices = computed(() => {
 }
 
 .page {
-  min-height: 100vh;
+  min-height: 100dvh;
   background-color: #fafafa;
   color: var(--color-text-dark);
 }
@@ -402,18 +485,18 @@ const displayedServices = computed(() => {
 }
 
 .solutions {
-  margin-top: 2.5rem;
-  width: 100%;
-  max-width: 800px;
+  margin-top: clamp(1.25rem, 4vw, 2.5rem);
+  width: 85vw;
+  max-width: min(85vw, 860px);
   background: #ffffff;
-  padding: clamp(1.25rem, 5vw, 2rem);
-  border-radius: clamp(0.75rem, 3vw, 1rem);
+  padding: clamp(1rem, 4vw, 2rem);
+  border-radius: clamp(0.65rem, 2vw, 1rem);
   box-shadow: 0 10px 30px var(--color-shadow);
 }
 
 .solutions__title {
-  margin: 0 0 1.5rem;
-  font-size: 1.25rem;
+  margin: 0 0 clamp(1rem, 2.5vw, 1.5rem);
+  font-size: clamp(1.05rem, 2.4vw, 1.25rem);
   font-weight: 700;
   color: var(--color-text-dark);
 }
@@ -422,8 +505,8 @@ const displayedServices = computed(() => {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: clamp(0.5rem, 2vw, 1rem);
+  margin-bottom: clamp(1rem, 2.5vw, 1.5rem);
   border-bottom: 2px solid var(--color-background-gradient-start);
   padding-bottom: 0.5rem;
 }
@@ -431,11 +514,11 @@ const displayedServices = computed(() => {
 .tab {
   background: none;
   border: none;
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 2.2vw, 1rem);
   font-weight: 600;
   color: var(--color-text-muted);
   cursor: pointer;
-  padding: 0.5rem 1rem;
+  padding: clamp(0.45rem, 1.5vw, 0.6rem) clamp(0.75rem, 2.4vw, 1rem);
   position: relative;
   transition: color 0.2s ease;
 }
@@ -461,16 +544,16 @@ const displayedServices = computed(() => {
 
 .filter-box {
   background-color: var(--color-primary-light);
-  padding: 1.25rem;
-  border-radius: 0.5rem;
-  margin-bottom: 1.5rem;
+  padding: clamp(0.9rem, 3vw, 1.25rem);
+  border-radius: clamp(0.45rem, 1.8vw, 0.5rem);
+  margin-bottom: clamp(1rem, 2.8vw, 1.5rem);
   animation: fadeIn 0.3s ease-in-out;
 }
 
 .filter__label {
   display: block;
   margin: 0 0 0.5rem;
-  font-size: 0.9rem;
+  font-size: clamp(0.85rem, 2vw, 0.95rem);
   font-weight: 600;
   color: var(--color-primary-dark);
   text-align: left;
@@ -480,8 +563,8 @@ const displayedServices = computed(() => {
   width: 100%;
   border: 1px solid var(--color-border);
   border-radius: 0.5rem;
-  padding: 0.65rem 0.75rem;
-  font-size: 0.95rem;
+  padding: clamp(0.6rem, 1.8vw, 0.7rem) clamp(0.65rem, 2vw, 0.8rem);
+  font-size: clamp(0.9rem, 2vw, 0.95rem);
   margin-bottom: 0.5rem;
   color: var(--color-text-dark);
   background: #ffffff;
@@ -494,28 +577,75 @@ const displayedServices = computed(() => {
 
 .filter__hint {
   margin: 0 0 0.75rem;
-  font-size: 0.85rem;
+  font-size: clamp(0.8rem, 1.8vw, 0.88rem);
   color: var(--color-text-muted);
   text-align: left;
+}
+
+.industry-filter {
+  display: flex;
+  gap: clamp(0.35rem, 1.5vw, 0.55rem);
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  margin-bottom: 0.9rem;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.industry-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+  color: var(--color-text-dark);
+  border-radius: 999px;
+  padding: clamp(0.4rem, 1.4vw, 0.5rem) clamp(0.65rem, 2vw, 0.8rem);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: clamp(0.76rem, 1.8vw, 0.84rem);
+  min-height: 38px;
+}
+
+.industry-chip:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.industry-chip--active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.industry-chip__icon {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.industry-chip__label {
+  line-height: 1;
 }
 
 .filter-options {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.5rem;
+  gap: clamp(0.4rem, 1.5vw, 0.6rem);
 }
 
 .filter-btn {
   background: #ffffff;
   border: 1px solid var(--color-border);
   color: var(--color-text-dark);
-  padding: 0.4rem 1rem;
+  padding: clamp(0.4rem, 1.5vw, 0.5rem) clamp(0.8rem, 2.5vw, 1rem);
   border-radius: 2rem;
-  font-size: 0.875rem;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-height: 38px;
 }
 
 .filter-btn:hover {
@@ -538,18 +668,18 @@ const displayedServices = computed(() => {
   padding: 0;
   margin: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  gap: clamp(0.7rem, 2vw, 1rem);
 }
 
 .service-item {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 2vw, 1rem);
   color: var(--color-text-dark);
   background: var(--color-background);
-  padding: 0.75rem 1rem;
+  padding: clamp(0.65rem, 1.8vw, 0.8rem) clamp(0.8rem, 2.2vw, 1rem);
   border-radius: 0.5rem;
   border: 1px solid var(--color-border);
   animation: fadeIn 0.3s ease-in-out;
@@ -583,15 +713,64 @@ const displayedServices = computed(() => {
   color: var(--color-primary);
 }
 
+@media (max-width: 900px) {
+  .hero__content {
+    width: min(100%, 900px);
+    gap: clamp(1rem, 3vw, 1.4rem);
+  }
+
+  .industry-chip__label {
+    max-width: 22ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 @media (max-width: 640px) {
+  .hero {
+    padding: clamp(1rem, 5vw, 1.5rem) clamp(0.8rem, 4vw, 1rem);
+  }
+
   .hero__actions {
     flex-direction: column;
     width: 100%;
-    gap: 1rem;
+    gap: 0.75rem;
   }
 
   .button {
     width: 100%;
+  }
+
+  .tabs {
+    gap: 0.4rem;
+  }
+
+  .tab {
+    flex: 1 1 auto;
+  }
+
+  .industry-filter {
+    margin-inline: -0.2rem;
+    padding-inline: 0.2rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .solutions {
+    padding: 0.85rem;
+    border-radius: 0.6rem;
+  }
+
+  .filter-box {
+    padding: 0.75rem;
+  }
+
+  .services-list {
+    grid-template-columns: 1fr;
+  }
+
+  .service-item {
+    min-height: 42px;
   }
 }
 </style>

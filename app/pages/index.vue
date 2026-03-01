@@ -234,6 +234,12 @@ const allServices = [
   { name: "Monitoreo de métricas de negocio", types: businessTypes },
 ];
 
+const shouldShowBusinessTypes = computed(() => {
+  const hasQuery = businessTypeQuery.value.trim().length > 0;
+  const hasIndustry = selectedIndustry.value.trim().length > 0;
+  return hasQuery || hasIndustry;
+});
+
 const filteredBusinessTypes = computed(() => {
   const query = businessTypeQuery.value.trim().toLowerCase();
 
@@ -324,16 +330,6 @@ const displayedServices = computed(() => {
               aria-label="Filtrar por industria"
             >
               <button
-                :class="[
-                  'industry-chip',
-                  { 'industry-chip--active': selectedIndustry === '' },
-                ]"
-                @click="selectedIndustry = ''"
-              >
-                <span class="industry-chip__icon">🧩</span>
-                <span class="industry-chip__label">Todas</span>
-              </button>
-              <button
                 v-for="industry in industries"
                 :key="industry.id"
                 :class="[
@@ -347,18 +343,27 @@ const displayedServices = computed(() => {
               </button>
             </div>
 
-            <div class="filter-options">
-              <button
-                v-for="biz in filteredBusinessTypes"
-                :key="biz"
-                :class="[
-                  'filter-btn',
-                  { 'filter-btn--active': selectedBusiness === biz },
-                ]"
-                @click="selectedBusiness = biz"
-              >
-                {{ biz }}
-              </button>
+            <p v-if="!shouldShowBusinessTypes" class="filter__empty">
+              Escribe en el buscador o selecciona una industria para ver tipos
+              de negocio.
+            </p>
+
+            <div v-else>
+              <p class="filter__subheading">Selecciona un tipo de negocio</p>
+
+              <div class="filter-options">
+                <button
+                  v-for="biz in filteredBusinessTypes"
+                  :key="biz"
+                  :class="[
+                    'filter-btn',
+                    { 'filter-btn--active': selectedBusiness === biz },
+                  ]"
+                  @click="selectedBusiness = biz"
+                >
+                  {{ biz }}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -370,12 +375,6 @@ const displayedServices = computed(() => {
             >
               <span class="service-icon">✨</span>
               <span class="service-name">{{ service }}</span>
-            </li>
-            <li
-              v-if="displayedServices.length === 0"
-              class="service-item service-item--empty"
-            >
-              Por favor, selecciona un tipo de negocio.
             </li>
           </ul>
         </div>
@@ -628,6 +627,21 @@ const displayedServices = computed(() => {
   line-height: 1;
 }
 
+.filter__empty {
+  margin: 0 0 clamp(0.6rem, 2vw, 0.85rem);
+  font-size: clamp(0.82rem, 1.9vw, 0.9rem);
+  color: var(--color-text-muted);
+  text-align: left;
+}
+
+.filter__subheading {
+  margin: 0 0 clamp(0.5rem, 1.8vw, 0.75rem);
+  font-size: clamp(0.85rem, 2vw, 0.95rem);
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  text-align: left;
+}
+
 .filter-options {
   display: flex;
   flex-wrap: wrap;
@@ -683,15 +697,6 @@ const displayedServices = computed(() => {
   border-radius: 0.5rem;
   border: 1px solid var(--color-border);
   animation: fadeIn 0.3s ease-in-out;
-}
-
-.service-item--empty {
-  grid-column: 1 / -1;
-  color: var(--color-text-muted);
-  background: transparent;
-  border: none;
-  justify-content: center;
-  font-style: italic;
 }
 
 .service-icon {

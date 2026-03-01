@@ -1,10 +1,17 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 
 const activeTab = ref("todas");
 const selectedBusiness = ref("");
 const businessTypeQuery = ref("");
 const selectedIndustry = ref("");
+
+watch(businessTypeQuery, (value) => {
+  // If the user starts typing, prefer search over industry filter.
+  if (value.trim().length > 0 && selectedIndustry.value) {
+    selectedIndustry.value = "";
+  }
+});
 
 const businessTypes = [
   "Restaurantes",
@@ -367,6 +374,10 @@ const displayedServices = computed(() => {
             </div>
           </div>
 
+          <p v-if="displayedServices.length > 0" class="services__title">
+            Servicios para ti:
+          </p>
+
           <ul class="services-list" role="list">
             <li
               v-for="service in displayedServices"
@@ -675,6 +686,14 @@ const displayedServices = computed(() => {
 
 .filter-btn--active:hover {
   color: #ffffff;
+}
+
+.services__title {
+  margin: 0 0 clamp(0.6rem, 2vw, 0.9rem);
+  font-size: clamp(1rem, 2.4vw, 1.15rem);
+  font-weight: 700;
+  color: var(--color-text-dark);
+  text-align: left;
 }
 
 .services-list {

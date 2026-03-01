@@ -1,0 +1,17 @@
+:root {
+  --color-primary: #10b981; /* Soft emerald */
+  --color-primary-dark: #047857; /* Darker emerald for hover */
+  --color-primary-light: #d1fae5; /* Light emerald for backgrounds */
+  --color-secondary: #6ee7b7; /* Complementary emerald shade */
+  --color-accent: #34d399; /* Accent emerald */
+  --color-text-dark: #022c22; /* Dark text on light bg */
+  --color-text-light: #f0fdf4; /* Light text on dark bg */
+  --color-text-muted: #6b7280; /* Gray for descriptions */
+  --color-background: #f0fdf4; /* Light emerald-tinted background */
+  --color-background-gradient-start: #ecfdf5;
+  --color-background-gradient-end: #ffffff;
+  --color-border: #a7f3d0; /* Light border color */
+  --color-shadow: rgba(16, 185, 129, 0.1); /* Soft shadow */
+  --color-title-light: #fdfdfd;
+  font-family: "Plus Jakarta Sans", sans-serif;
+}

@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 
 const activeTab = ref("todas");
 const selectedBusiness = ref("");
+const businessTypeQuery = ref("");
 
 const businessTypes = [
   "Restaurantes",
@@ -186,6 +187,14 @@ const allServices = [
   { name: "Monitoreo de métricas de negocio", types: businessTypes },
 ];
 
+const filteredBusinessTypes = computed(() => {
+  const query = businessTypeQuery.value.trim().toLowerCase();
+
+  if (!query) return businessTypes;
+
+  return businessTypes.filter((biz) => biz.toLowerCase().includes(query));
+});
+
 const displayedServices = computed(() => {
   if (activeTab.value === "todas") {
     return allServices.map((s) => s.name);
@@ -244,10 +253,20 @@ const displayedServices = computed(() => {
             role="tabpanel"
             aria-labelledby="tab-para-mi"
           >
-            <p class="filter__label">Selecciona tu tipo de negocio:</p>
+            <label class="filter__label" for="business-type-search"
+              >¿Qué tipo de negocio tienes?</label
+            >
+            <input
+              id="business-type-search"
+              v-model="businessTypeQuery"
+              class="filter-search"
+              type="text"
+              placeholder="Ejemplo: Restaurante, Barbería o Clínica dental"
+            />
+            <p class="filter__hint">También puedes filtrar por industria:</p>
             <div class="filter-options">
               <button
-                v-for="biz in businessTypes"
+                v-for="biz in filteredBusinessTypes"
                 :key="biz"
                 :class="[
                   'filter-btn',
@@ -449,11 +468,35 @@ const displayedServices = computed(() => {
 }
 
 .filter__label {
-  margin: 0 0 0.75rem;
+  display: block;
+  margin: 0 0 0.5rem;
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--color-primary-dark);
-  text-align: center;
+  text-align: left;
+}
+
+.filter-search {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-dark);
+  background: #ffffff;
+}
+
+.filter-search:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.filter__hint {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  text-align: left;
 }
 
 .filter-options {

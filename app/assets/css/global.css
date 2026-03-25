@@ -15,3 +15,7 @@
   --color-title-light: #fdfdfd;
   font-family: "Plus Jakarta Sans", sans-serif;
 }
+
+body {
+  margin: 0;
+}

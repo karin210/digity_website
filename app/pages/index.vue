@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, watch } from "vue";
+import HeroSlider from "~/components/HeroSlider.vue";
 
 const activeTab = ref("todas");
 const selectedBusiness = ref("");
@@ -14,8 +15,8 @@ watch(businessTypeQuery, (value) => {
 });
 
 const businessTypes = [
-  "Restaurantes",
-  "Hoteles",
+  "Restaurante",
+  "Hotel",
   "Café",
   "Barbería",
   "Salón de belleza",
@@ -60,8 +61,8 @@ const industries = [
 ];
 
 const businessIndustryMap = {
-  Restaurantes: "alimentos",
-  Hoteles: "alimentos",
+  Restaurante: "alimentos",
+  Hotel: "alimentos",
   Café: "alimentos",
   Barbería: "belleza",
   "Salón de belleza": "belleza",
@@ -97,8 +98,8 @@ const allServices = [
   {
     name: "Reservaciones en línea",
     types: [
-      "Restaurantes",
-      "Hoteles",
+      "Restaurante",
+      "Hotel",
       "Café",
       "Salón de eventos",
       "Coworking",
@@ -231,7 +232,7 @@ const allServices = [
       "Boutique de moda",
       "Ferretería",
       "Farmacia",
-      "Restaurantes",
+      "Restaurante",
       "Café",
       "Imprenta",
       "Otro",
@@ -274,121 +275,108 @@ const displayedServices = computed(() => {
 
 <template>
   <main class="page">
-    <section class="hero">
-      <div class="hero__content">
-        <p class="hero__eyebrow">Software y marketing para tu empresa</p>
+    <HeroSlider />
+    <section>
+      <div class="solutions" aria-label="Nuestras soluciones">
+        <h3 class="solutions__title">Descubre nuestras soluciones</h3>
 
-        <h1 class="hero__brand">Digity</h1>
+        <div class="tabs" role="tablist">
+          <button
+            id="tab-para-mi"
+            role="tab"
+            :aria-selected="activeTab === 'para_mi'"
+            :class="['tab', { 'tab--active': activeTab === 'para_mi' }]"
+            @click="activeTab = 'para_mi'"
+          >
+            Para mí
+          </button>
+          <button
+            id="tab-todas"
+            role="tab"
+            :aria-selected="activeTab === 'todas'"
+            :class="['tab', { 'tab--active': activeTab === 'todas' }]"
+            @click="activeTab = 'todas'"
+          >
+            Todas
+          </button>
+        </div>
 
         <div
-          class="hero__actions"
-          role="group"
-          aria-label="Acciones principales"
+          v-if="activeTab === 'para_mi'"
+          class="filter-box"
+          role="tabpanel"
+          aria-labelledby="tab-para-mi"
         >
-          <a class="button button--primary" href="#contacto"> Contactar </a>
-        </div>
-
-        <div class="solutions" aria-label="Nuestras soluciones">
-          <h3 class="solutions__title">Descubre nuestras soluciones</h3>
-
-          <div class="tabs" role="tablist">
-            <button
-              id="tab-para-mi"
-              role="tab"
-              :aria-selected="activeTab === 'para_mi'"
-              :class="['tab', { 'tab--active': activeTab === 'para_mi' }]"
-              @click="activeTab = 'para_mi'"
-            >
-              Para mí
-            </button>
-            <button
-              id="tab-todas"
-              role="tab"
-              :aria-selected="activeTab === 'todas'"
-              :class="['tab', { 'tab--active': activeTab === 'todas' }]"
-              @click="activeTab = 'todas'"
-            >
-              Todas
-            </button>
-          </div>
-
-          <div
-            v-if="activeTab === 'para_mi'"
-            class="filter-box"
-            role="tabpanel"
-            aria-labelledby="tab-para-mi"
+          <label class="filter__label" for="business-type-search"
+            >¿Qué tipo de negocio tienes?</label
           >
-            <label class="filter__label" for="business-type-search"
-              >¿Qué tipo de negocio tienes?</label
+          <input
+            id="business-type-search"
+            v-model="businessTypeQuery"
+            class="filter-search"
+            type="text"
+            placeholder="Ejemplo: Restaurante, Barbería o Clínica dental"
+          />
+          <p class="filter__hint">
+            También puedes buscar tu tipo de negocio por industria
+          </p>
+          <div
+            class="industry-filter"
+            role="list"
+            aria-label="Filtrar por industria"
+          >
+            <button
+              v-for="industry in industries"
+              :key="industry.id"
+              :class="[
+                'industry-chip',
+                { 'industry-chip--active': selectedIndustry === industry.id },
+              ]"
+              @click="selectedIndustry = industry.id"
             >
-            <input
-              id="business-type-search"
-              v-model="businessTypeQuery"
-              class="filter-search"
-              type="text"
-              placeholder="Ejemplo: Restaurante, Barbería o Clínica dental"
-            />
-            <p class="filter__hint">
-              También puedes buscar tu tipo de negocio por industria
-            </p>
-            <div
-              class="industry-filter"
-              role="list"
-              aria-label="Filtrar por industria"
-            >
-              <button
-                v-for="industry in industries"
-                :key="industry.id"
-                :class="[
-                  'industry-chip',
-                  { 'industry-chip--active': selectedIndustry === industry.id },
-                ]"
-                @click="selectedIndustry = industry.id"
-              >
-                <span class="industry-chip__icon">{{ industry.icon }}</span>
-                <span class="industry-chip__label">{{ industry.name }}</span>
-              </button>
-            </div>
-
-            <p v-if="!shouldShowBusinessTypes" class="filter__empty">
-              Escribe en el buscador o selecciona una industria para ver tipos
-              de negocio.
-            </p>
-
-            <div v-else>
-              <p class="filter__subheading">Selecciona un tipo de negocio</p>
-
-              <div class="filter-options">
-                <button
-                  v-for="biz in filteredBusinessTypes"
-                  :key="biz"
-                  :class="[
-                    'filter-btn',
-                    { 'filter-btn--active': selectedBusiness === biz },
-                  ]"
-                  @click="selectedBusiness = biz"
-                >
-                  {{ biz }}
-                </button>
-              </div>
-            </div>
+              <span class="industry-chip__icon">{{ industry.icon }}</span>
+              <span class="industry-chip__label">{{ industry.name }}</span>
+            </button>
           </div>
 
-          <p v-if="displayedServices.length > 0" class="services__title">
-            Servicios para ti:
+          <p v-if="!shouldShowBusinessTypes" class="filter__empty">
+            Escribe en el buscador o selecciona una industria para ver tipos de
+            negocio.
           </p>
 
-          <ul class="services-list" role="list">
-            <li
-              v-for="service in displayedServices"
-              :key="service"
-              class="service-item"
-            >
-              <span class="service-icon">✨</span>
-              <span class="service-name">{{ service }}</span>
-            </li>
-          </ul>
+          <div v-else>
+            <p class="filter__subheading">Selecciona un tipo de negocio</p>
+
+            <div class="filter-options">
+              <button
+                v-for="biz in filteredBusinessTypes"
+                :key="biz"
+                :class="[
+                  'filter-btn',
+                  { 'filter-btn--active': selectedBusiness === biz },
+                ]"
+                @click="selectedBusiness = biz"
+              >
+                {{ biz }}
+              </button>
+            </div>
+          </div>
         </div>
+
+        <p v-if="displayedServices.length > 0" class="services__title">
+          Servicios para ti:
+        </p>
+
+        <ul class="services-list" role="list">
+          <li
+            v-for="service in displayedServices"
+            :key="service"
+            class="service-item"
+          >
+            <span class="service-icon">✨</span>
+            <span class="service-name">{{ service }}</span>
+          </li>
+        </ul>
       </div>
     </section>
   </main>
@@ -403,20 +391,6 @@ const displayedServices = computed(() => {
 *::before,
 *::after {
   box-sizing: border-box;
-}
-
-.hero__brand {
-  margin: 0;
-  color: var(--color-title-light);
-  font-size: clamp(2rem, 8vw, 4rem);
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-shadow:
-    1.5px 0px var(--color-primary),
-    0px 1.5px var(--color-primary),
-    -1.5px 0px var(--color-primary),
-    0px -1.5px var(--color-primary);
-  text-transform: uppercase;
 }
 
 .page {
@@ -445,7 +419,7 @@ const displayedServices = computed(() => {
   margin: 0;
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: var(--color-primary);
+  color: #262c2a;
   font-size: clamp(1.125rem, 2.5vw, 1.25rem);
 }
 
@@ -495,9 +469,10 @@ const displayedServices = computed(() => {
 }
 
 .solutions {
+  margin: 0 auto;
   margin-top: clamp(1.25rem, 4vw, 2.5rem);
   width: 85vw;
-  max-width: min(85vw, 860px);
+  max-width: min(85vw, 1000px);
   background: #ffffff;
   padding: clamp(1rem, 4vw, 2rem);
   border-radius: clamp(0.65rem, 2vw, 1rem);
@@ -509,6 +484,7 @@ const displayedServices = computed(() => {
   font-size: clamp(1.05rem, 2.4vw, 1.25rem);
   font-weight: 700;
   color: var(--color-text-dark);
+  text-align: center;
 }
 
 .tabs {

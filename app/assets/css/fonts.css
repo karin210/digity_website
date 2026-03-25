@@ -1,7 +1,7 @@
 /* Regular variable font */
 @font-face {
   font-family: "Geist";
-  src: url("/public/fonts/Geist/Geist-VariableFont_wght.ttf") format("truetype");
+  src: url("/fonts/Geist/Geist-VariableFont_wght.ttf") format("truetype");
   font-weight: 100 900; /* range supported by the variable font */
   font-style: normal;
   font-display: swap;
@@ -10,7 +10,7 @@
 /* Regular variable font */
 @font-face {
   font-family: "Plus Jakarta Sans";
-  src: url("/public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-VariableFont_wght.ttf")
+  src: url("/fonts/Plus_Jakarta_Sans/PlusJakartaSans-VariableFont_wght.ttf")
     format("truetype");
   font-weight: 200 800; /* range supported by the variable font */
   font-style: normal;
@@ -20,7 +20,7 @@
 /* Italic variable font */
 @font-face {
   font-family: "Plus Jakarta Sans";
-  src: url("/public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Italic-VariableFont_wght.ttf")
+  src: url("/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Italic-VariableFont_wght.ttf")
     format("truetype");
   font-weight: 200 800;
   font-style: italic;

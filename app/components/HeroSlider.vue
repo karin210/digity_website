@@ -98,7 +98,7 @@ const stopAutoplay = () => {
 };
 
 onMounted(() => {
-  //startAutoplay();
+  startAutoplay();
 });
 
 onUnmounted(() => {

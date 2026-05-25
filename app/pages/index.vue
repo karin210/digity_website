@@ -1,382 +1,89 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import HeroSlider from "~/components/HeroSlider.vue";
+import {
+  businessTypes,
+  industries,
+  businessIndustryMap,
+  allServices,
+} from "../../utils/servicesData";
 
-const activeTab = ref("todas");
-const selectedBusiness = ref("");
-const businessTypeQuery = ref("");
-const selectedIndustry = ref("");
+const chatMessage = ref("");
+const chatReply = ref("");
+const chatServices = ref<string[]>([]);
+const chatLoading = ref(false);
 
-watch(businessTypeQuery, (value) => {
-  // If the user starts typing, prefer search over industry filter.
-  if (value.trim().length > 0 && selectedIndustry.value) {
-    selectedIndustry.value = "";
+async function sendChatMessage() {
+  if (!chatMessage.value.trim() || chatLoading.value) return;
+
+  chatLoading.value = true;
+  chatReply.value = "";
+  chatServices.value = [];
+
+  try {
+    const response = await $fetch<{ reply: string; services: string[] }>(
+      "/api/chat/chat",
+      {
+        method: "POST",
+        body: { message: chatMessage.value },
+      },
+    );
+    chatReply.value = response.reply;
+    chatServices.value = response.services;
+  } catch {
+    chatReply.value =
+      "Ocurrió un error al procesar tu mensaje. Por favor, intenta de nuevo.";
+  } finally {
+    chatLoading.value = false;
   }
-});
-
-const businessTypes = [
-  "Restaurante",
-  "Hotel",
-  "Café",
-  "Barbería",
-  "Salón de belleza",
-  "Servicios automotrices",
-  "Venta de autos",
-  "Agencia inmobiliaria",
-  "Gimnasio",
-  "Farmacia",
-  "Clínica dental",
-  "Hospital",
-  "Laboratorio",
-  "Despacho de abogados",
-  "Consultora",
-  "Firma de contabilidad",
-  "Firma de auditoría",
-  "Supermercado",
-  "Tienda",
-  "Boutique de moda",
-  "Ferretería",
-  "Constructora",
-  "Reparación de electrónicos",
-  "Salón de eventos",
-  "Planeación de eventos",
-  "Estudio de Fotografía",
-  "Agencia de viajes",
-  "Veterinaria",
-  "Imprenta",
-  "Coworking",
-  "Otro",
-];
-
-const industries = [
-  { id: "alimentos", name: "Alimentos y hospitalidad", icon: "🍽️" },
-  { id: "belleza", name: "Belleza y bienestar", icon: "💇" },
-  { id: "salud", name: "Salud", icon: "🏥" },
-  { id: "profesional", name: "Servicios profesionales", icon: "💼" },
-  { id: "comercio", name: "Comercio y retail", icon: "🛍️" },
-  { id: "industrial", name: "Industrial y construcción", icon: "🏗️" },
-  { id: "eventos", name: "Eventos y creativos", icon: "🎉" },
-  { id: "movilidad", name: "Movilidad y viajes", icon: "🚗" },
-  { id: "mas", name: "Otros", icon: "✨" },
-];
-
-const businessIndustryMap = {
-  Restaurante: "alimentos",
-  Hotel: "alimentos",
-  Café: "alimentos",
-  Barbería: "belleza",
-  "Salón de belleza": "belleza",
-  Gimnasio: "belleza",
-  Farmacia: "salud",
-  "Clínica dental": "salud",
-  Hospital: "salud",
-  Laboratorio: "salud",
-  Veterinaria: "salud",
-  "Despacho de abogados": "profesional",
-  Consultora: "profesional",
-  "Firma de contabilidad": "profesional",
-  "Firma de auditoría": "profesional",
-  "Agencia inmobiliaria": "profesional",
-  Coworking: "profesional",
-  Supermercado: "comercio",
-  Tienda: "comercio",
-  "Boutique de moda": "comercio",
-  Ferretería: "comercio",
-  Imprenta: "comercio",
-  "Servicios automotrices": "industrial",
-  Constructora: "industrial",
-  "Reparación de electrónicos": "industrial",
-  "Venta de autos": "movilidad",
-  "Agencia de viajes": "movilidad",
-  "Salón de eventos": "eventos",
-  "Planeación de eventos": "eventos",
-  "Estudio de Fotografía": "eventos",
-  Otro: "mas",
-};
-
-const allServices = [
-  {
-    name: "Reservaciones en línea",
-    types: [
-      "Restaurante",
-      "Hotel",
-      "Café",
-      "Salón de eventos",
-      "Coworking",
-      "Otro",
-    ],
-  },
-  { name: "Página web", types: businessTypes },
-  { name: "Manejo de redes sociales", types: businessTypes },
-  {
-    name: "Venta en línea",
-    types: [
-      "Supermercado",
-      "Tienda",
-      "Boutique de moda",
-      "Ferretería",
-      "Farmacia",
-      "Venta de autos",
-      "Imprenta",
-      "Otro",
-    ],
-  },
-  {
-    name: "e-commerce",
-    types: [
-      "Supermercado",
-      "Tienda",
-      "Boutique de moda",
-      "Ferretería",
-      "Farmacia",
-      "Imprenta",
-      "Otro",
-    ],
-  },
-  { name: "Notificaciones", types: businessTypes },
-  {
-    name: "Gestión de clientes",
-    types: [
-      "Barbería",
-      "Salón de belleza",
-      "Servicios automotrices",
-      "Venta de autos",
-      "Agencia inmobiliaria",
-      "Gimnasio",
-      "Clínica dental",
-      "Hospital",
-      "Laboratorio",
-      "Despacho de abogados",
-      "Consultora",
-      "Firma de contabilidad",
-      "Firma de auditoría",
-      "Constructora",
-      "Planeación de eventos",
-      "Estudio de Fotografía",
-      "Agencia de viajes",
-      "Veterinaria",
-      "Coworking",
-      "Otro",
-    ],
-  },
-  {
-    name: "Optimización en buscadores (Google, Firefox y Edge)",
-    types: businessTypes,
-  },
-  { name: "Panel de administración", types: businessTypes },
-  { name: "Conexión con WhatsApp", types: businessTypes },
-  {
-    name: "Citas en línea",
-    types: [
-      "Barbería",
-      "Salón de belleza",
-      "Clínica dental",
-      "Hospital",
-      "Laboratorio",
-      "Despacho de abogados",
-      "Consultora",
-      "Servicios automotrices",
-      "Estudio de Fotografía",
-      "Veterinaria",
-      "Agencia inmobiliaria",
-      "Otro",
-    ],
-  },
-  {
-    name: "Recordatorios automáticos por WhatsApp y correo electrónico",
-    types: [
-      "Barbería",
-      "Salón de belleza",
-      "Clínica dental",
-      "Hospital",
-      "Laboratorio",
-      "Despacho de abogados",
-      "Consultora",
-      "Gimnasio",
-      "Veterinaria",
-      "Otro",
-    ],
-  },
-  {
-    name: "Cotizaciones automáticas",
-    types: [
-      "Servicios automotrices",
-      "Venta de autos",
-      "Constructora",
-      "Reparación de electrónicos",
-      "Salón de eventos",
-      "Planeación de eventos",
-      "Imprenta",
-      "Agencia de viajes",
-      "Otro",
-    ],
-  },
-  {
-    name: "Seguimiento post-servicio",
-    types: [
-      "Servicios automotrices",
-      "Clínica dental",
-      "Hospital",
-      "Veterinaria",
-      "Reparación de electrónicos",
-      "Venta de autos",
-      "Agencia de viajes",
-      "Otro",
-    ],
-  },
-  {
-    name: "Inventario automático",
-    types: [
-      "Supermercado",
-      "Tienda",
-      "Boutique de moda",
-      "Ferretería",
-      "Farmacia",
-      "Restaurante",
-      "Café",
-      "Imprenta",
-      "Otro",
-    ],
-  },
-  { name: "Facturación electrónica", types: businessTypes },
-  { name: "Monitoreo de métricas de negocio", types: businessTypes },
-];
-
-const shouldShowBusinessTypes = computed(() => {
-  const hasQuery = businessTypeQuery.value.trim().length > 0;
-  const hasIndustry = selectedIndustry.value.trim().length > 0;
-  return hasQuery || hasIndustry;
-});
-
-const filteredBusinessTypes = computed(() => {
-  const query = businessTypeQuery.value.trim().toLowerCase();
-
-  return businessTypes.filter((biz) => {
-    const matchesQuery = !query || biz.toLowerCase().includes(query);
-    const matchesIndustry =
-      !selectedIndustry.value ||
-      businessIndustryMap[biz] === selectedIndustry.value;
-
-    return matchesQuery && matchesIndustry;
-  });
-});
-
-const displayedServices = computed(() => {
-  if (activeTab.value === "todas") {
-    return allServices.map((s) => s.name);
-  } else {
-    if (!selectedBusiness.value) return [];
-    return allServices
-      .filter((s) => s.types.includes(selectedBusiness.value))
-      .map((s) => s.name);
-  }
-});
+}
 </script>
 
 <template>
   <main class="page">
     <HeroSlider />
-    <section>
-      <div class="solutions" aria-label="Nuestras soluciones">
-        <h3 class="solutions__title">Descubre nuestras soluciones</h3>
-
-        <div class="tabs" role="tablist">
-          <button
-            id="tab-para-mi"
-            role="tab"
-            :aria-selected="activeTab === 'para_mi'"
-            :class="['tab', { 'tab--active': activeTab === 'para_mi' }]"
-            @click="activeTab = 'para_mi'"
-          >
-            Para mí
-          </button>
-          <button
-            id="tab-todas"
-            role="tab"
-            :aria-selected="activeTab === 'todas'"
-            :class="['tab', { 'tab--active': activeTab === 'todas' }]"
-            @click="activeTab = 'todas'"
-          >
-            Todas
-          </button>
-        </div>
-
-        <div
-          v-if="activeTab === 'para_mi'"
-          class="filter-box"
-          role="tabpanel"
-          aria-labelledby="tab-para-mi"
-        >
-          <label class="filter__label" for="business-type-search"
-            >¿Qué tipo de negocio tienes?</label
-          >
-          <input
-            id="business-type-search"
-            v-model="businessTypeQuery"
-            class="filter-search"
-            type="text"
-            placeholder="Ejemplo: Restaurante, Barbería o Clínica dental"
-          />
-          <p class="filter__hint">
-            También puedes buscar tu tipo de negocio por industria
-          </p>
-          <div
-            class="industry-filter"
-            role="list"
-            aria-label="Filtrar por industria"
-          >
-            <button
-              v-for="industry in industries"
-              :key="industry.id"
-              :class="[
-                'industry-chip',
-                { 'industry-chip--active': selectedIndustry === industry.id },
-              ]"
-              @click="selectedIndustry = industry.id"
-            >
-              <span class="industry-chip__icon">{{ industry.icon }}</span>
-              <span class="industry-chip__label">{{ industry.name }}</span>
-            </button>
-          </div>
-
-          <p v-if="!shouldShowBusinessTypes" class="filter__empty">
-            Escribe en el buscador o selecciona una industria para ver tipos de
-            negocio.
-          </p>
-
-          <div v-else>
-            <p class="filter__subheading">Selecciona un tipo de negocio</p>
-
-            <div class="filter-options">
-              <button
-                v-for="biz in filteredBusinessTypes"
-                :key="biz"
-                :class="[
-                  'filter-btn',
-                  { 'filter-btn--active': selectedBusiness === biz },
-                ]"
-                @click="selectedBusiness = biz"
-              >
-                {{ biz }}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <p v-if="displayedServices.length > 0" class="services__title">
-          Servicios para ti:
+    <section class="chatbot-section">
+      <div class="chatbot">
+        <h3 class="chatbot__title">Cuéntanos sobre tu negocio</h3>
+        <p class="chatbot__subtitle">
+          Describe tu negocio y te recomendaremos los servicios ideales para ti.
         </p>
 
-        <ul class="services-list" role="list">
-          <li
-            v-for="service in displayedServices"
-            :key="service"
-            class="service-item"
+        <div class="chatbot__input-row">
+          <input
+            v-model="chatMessage"
+            class="chatbot__input"
+            type="text"
+            placeholder="Ejemplo: Tengo una barbería en Monterrey..."
+            :disabled="chatLoading"
+          />
+          <button
+            class="chatbot__send-btn"
+            :disabled="chatLoading || !chatMessage.trim()"
+            @click="sendChatMessage"
           >
-            <span class="service-icon">✨</span>
-            <span class="service-name">{{ service }}</span>
-          </li>
-        </ul>
+            {{ chatLoading ? "..." : "Enviar" }}
+          </button>
+        </div>
+
+        <div v-if="chatReply" class="chatbot__response">
+          <p class="chatbot__reply">{{ chatReply }}</p>
+          <template v-if="chatServices.length > 0">
+            <p class="chatbot__services-title">
+              Servicios recomendados para ti:
+            </p>
+            <ul class="chatbot__services-list" role="list">
+              <li
+                v-for="service in chatServices"
+                :key="service"
+                class="chatbot__service-item"
+              >
+                <span class="service-icon">✨</span>
+                <span>{{ service }}</span>
+              </li>
+            </ul>
+          </template>
+        </div>
       </div>
     </section>
   </main>
@@ -483,7 +190,6 @@ const displayedServices = computed(() => {
   margin: 0 0 clamp(1rem, 2.5vw, 1.5rem);
   font-size: clamp(1.05rem, 2.4vw, 1.25rem);
   font-weight: 700;
-  color: var(--color-text-dark);
   text-align: center;
 }
 
@@ -771,6 +477,140 @@ const displayedServices = computed(() => {
 
   .service-item {
     min-height: 42px;
+  }
+}
+
+.chatbot-section {
+  display: flex;
+  justify-content: center;
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 2rem);
+}
+
+.chatbot {
+  width: 85vw;
+  max-width: min(85vw, 1000px);
+  background: #ffffff;
+  padding: clamp(1rem, 4vw, 2rem);
+  border-radius: clamp(0.65rem, 2vw, 1rem);
+  box-shadow: 0 10px 30px var(--color-shadow);
+}
+
+.chatbot__title {
+  margin: 0 0 0.4rem;
+  font-size: clamp(1.05rem, 2.4vw, 1.25rem);
+  font-weight: 700;
+  text-align: center;
+}
+
+.chatbot__subtitle {
+  margin: 0 0 clamp(1rem, 2.5vw, 1.5rem);
+  font-size: clamp(0.85rem, 2vw, 0.95rem);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.chatbot__input-row {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.chatbot__input {
+  flex: 1;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  padding: clamp(0.6rem, 1.8vw, 0.7rem) clamp(0.65rem, 2vw, 0.8rem);
+  font-size: clamp(0.9rem, 2vw, 0.95rem);
+  color: var(--color-text-dark);
+  background: #fafafa;
+  transition: border-color 0.2s ease;
+}
+
+.chatbot__input:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.chatbot__input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.chatbot__send-btn {
+  min-height: 44px;
+  padding: 0.6rem 1.25rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: var(--color-primary);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: clamp(0.85rem, 2vw, 0.95rem);
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.chatbot__send-btn:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+}
+
+.chatbot__send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chatbot__response {
+  margin-top: clamp(1rem, 2.5vw, 1.5rem);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.chatbot__reply {
+  margin: 0 0 clamp(0.75rem, 2vw, 1rem);
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  color: var(--color-text-dark);
+  line-height: 1.6;
+}
+
+.chatbot__services-title {
+  margin: 0 0 0.6rem;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  font-weight: 700;
+  color: var(--color-text-dark);
+}
+
+.chatbot__services-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  gap: clamp(0.7rem, 2vw, 1rem);
+}
+
+.chatbot__service-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: clamp(0.88rem, 2vw, 0.97rem);
+  color: var(--color-text-dark);
+  background: var(--color-background);
+  padding: clamp(0.55rem, 1.6vw, 0.7rem) clamp(0.75rem, 2vw, 0.9rem);
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+}
+
+@media (max-width: 640px) {
+  .chatbot__input-row {
+    flex-direction: column;
+  }
+
+  .chatbot__send-btn {
+    width: 100%;
+  }
+
+  .chatbot__services-list {
+    grid-template-columns: 1fr;
   }
 }
 </style>

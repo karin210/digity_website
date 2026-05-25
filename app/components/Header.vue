@@ -12,7 +12,6 @@
         <div class="header-mobile-toggle">
           <!-- Mobile menu button -->
           <button @click="toggleMenu" class="header-menu-btn">
-            <span class="sr-only">Abrir menú</span>
             <!-- Icon for menu -->
             <svg
               class="header-menu-icon"

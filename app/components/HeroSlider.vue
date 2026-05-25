@@ -5,6 +5,7 @@
     aria-label="Hero Image Slider"
   >
     <div class="slider-container">
+      <h1 id="hero-title">Software y marketing para tu empresa</h1>
       <div
         v-for="(slide, index) in slides"
         :id="`slide-${index + 1}`"
@@ -98,7 +99,7 @@ const stopAutoplay = () => {
 };
 
 onMounted(() => {
-  startAutoplay();
+  //startAutoplay();
 });
 
 onUnmounted(() => {
@@ -110,9 +111,8 @@ onUnmounted(() => {
 .hero-slider {
   position: relative;
   width: 100%;
-  height: 100dvh;
+  height: 90dvh;
   overflow: hidden;
-  max-height: 80vh; /* Limit height for hero section */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -168,6 +168,18 @@ onUnmounted(() => {
   padding: 1rem;
   max-width: 80%;
   z-index: 10;
+}
+
+#hero-title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 30px;
+  z-index: 10;
+  color: white;
+  text-align: center;
+  font-size: clamp(19px, 13.18px + 1.82vw, 33px);
+  padding-inline: 30px;
 }
 
 .slide-text {

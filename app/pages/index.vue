@@ -52,6 +52,7 @@ import ChatbotSection from "~/components/ChatbotSection.vue";
 }
 
 .hero__content {
+  box-sizing: border-box;
   position: relative;
   z-index: 1;
   width: 100%;

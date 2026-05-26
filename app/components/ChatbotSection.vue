@@ -60,16 +60,13 @@ async function sendChatMessage() {
       <div v-if="chatReply" class="chatbot__response">
         <p class="chatbot__reply">{{ chatReply }}</p>
         <template v-if="chatServices.length > 0">
-          <p class="chatbot__services-title">
-            Servicios recomendados para ti:
-          </p>
+          <p class="chatbot__services-title">Servicios recomendados para ti:</p>
           <ul class="chatbot__services-list" role="list">
             <li
               v-for="service in chatServices"
               :key="service"
               class="chatbot__service-item"
             >
-              <span class="service-icon">✨</span>
               <span>{{ service }}</span>
             </li>
           </ul>
@@ -180,6 +177,7 @@ async function sendChatMessage() {
 }
 
 .chatbot__services-list {
+  box-sizing: border-box;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -189,19 +187,27 @@ async function sendChatMessage() {
 }
 
 .chatbot__service-item {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-size: clamp(0.88rem, 2vw, 0.97rem);
+  font-weight: 600;
   color: var(--color-text-dark);
   background: var(--color-background);
   padding: clamp(0.55rem, 1.6vw, 0.7rem) clamp(0.75rem, 2vw, 0.9rem);
   border-radius: 0.5rem;
   border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-primary);
+  box-shadow: 0 2px 8px var(--color-shadow);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
-.service-icon {
-  font-size: 1.2rem;
+.chatbot__service-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px var(--color-shadow);
 }
 
 @keyframes fadeIn {

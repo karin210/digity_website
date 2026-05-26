@@ -7,6 +7,12 @@ export default defineNuxtConfig({
     baseURL: "/",
   },
 
+  vite: {
+    server: {
+      allowedHosts: ["7e00-206-85-11-81.ngrok-free.app"],
+    },
+  },
+
   css: ["~/assets/css/global.css", "~/assets/css/fonts.css"],
   modules: ["@nuxt/image"],
 });

@@ -9,11 +9,11 @@ import ChatbotSection from "~/components/ChatbotSection.vue";
     <section class="hero">
       <NuxtImg
         src="/images/Morelia_background.jpg"
-        alt="Vista aérea de Morelia, Michoacán"
+        alt="Vista de Morelia, Michoacán"
         class="hero__bg"
       />
       <div class="hero__content">
-        <h1 class="hero__title">Software y marketing para tu empresa</h1>
+        <h1 class="hero__title">Desarrollo Web y Marketing para tu compañía</h1>
         <ChatbotSection />
       </div>
     </section>
@@ -36,6 +36,7 @@ import ChatbotSection from "~/components/ChatbotSection.vue";
   width: 100%;
   min-height: 100dvh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
@@ -57,13 +58,14 @@ import ChatbotSection from "~/components/ChatbotSection.vue";
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem);
+  justify-content: center;
   gap: clamp(1.5rem, 3vw, 2.5rem);
+  padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem);
 }
 
 .hero__title {
   color: var(--color-title-light);
-  font-size: clamp(1.5rem, 4vw, 3rem);
+  font-size: clamp(1.1rem, 3.5vw, 2rem);
   font-weight: 700;
   text-align: center;
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);

@@ -23,6 +23,10 @@ Website for Digity, a top tier web development agency in Mexico.
 - Layout: fluid design using `clamp()`, relative units (`rem`, `%`, `vw`/`vh`), and CSS custom properties; avoid fixed pixel widths for layout containers
 - Markup: use semantic HTML5 elements (`header`, `nav`, `main`, `section`, `article`, `footer`, etc.); never use `<div>` where a semantic element fits
 
+## CSS conventions
+
+- `position: absolute` must only be applied to a parent/wrapper element, never to individual sibling children. Removing an element from document flow affects all its siblings, so absolutely positioning children one-by-one cascades into every sibling needing the same treatment. Instead, wrap the group of elements that need to float together in a single parent and apply `position: absolute` to that parent — the children then keep their normal flow relative to the wrapper. If children are being hidden behind an absolutely-positioned sibling, do not fix it by absolutely positioning each child; wrap them in a parent element and set `position: absolute` on the wrapper to bring the whole group to the correct stacking layer while preserving internal document flow.
+
 ## Design guidelines
 
 - Tone: refined but warm, elegant, minimalistic — not generic or corporate

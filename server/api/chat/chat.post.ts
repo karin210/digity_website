@@ -1,6 +1,5 @@
-// server/api/chat.post.ts
 import { GoogleGenAI, Type } from "@google/genai";
-import { servicesMap } from "../../../utils/servicesData";
+import { businessActivitiesMap } from "../../../utils/servicesData";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -18,33 +17,54 @@ export default defineEventHandler(async (event) => {
 
   const systemInstruction = `
       Eres un asistente de clasificación para una agencia de desarrollo de software en México y América Latina.
-      Analiza la descripción del negocio del usuario y clasifícalo en EXACTAMENTE una de estas categorías:
 
-      - "alimentos": restaurantes, hoteles, cafés, dark kitchens, bares, fondas
-      - "belleza": barberías, salones de belleza, spas, gimnasios, centros de bienestar
-      - "salud": farmacias, clínicas dentales, hospitales, laboratorios, veterinarias, consultorios médicos
-      - "profesional": despachos de abogados, consultoras, firmas de contabilidad, firmas de auditoría, agencias inmobiliarias, coworking
-      - "comercio": supermercados, tiendas, boutiques de moda, ferreterías, imprentas
-      - "industrial": servicios automotrices, constructoras, talleres de reparación de electrónicos
-      - "eventos": salones de eventos, planificación de eventos, estudios de fotografía
-      - "movilidad": agencias de viajes, venta de autos, transporte
-      - "mas": cualquier otro tipo de negocio no contemplado en las categorías anteriores
+      Analiza la descripción del negocio del usuario y clasifícalo en el tipo de negocio que mejor le corresponda de esta lista:
+
+      - "Restaurante": venta de platillos y bebidas; opera por reservaciones, servicio para llevar o a domicilio
+      - "Hotel": hospedaje, uso de amenidades, renta de espacios para eventos; opera por reservaciones y recepción
+      - "Cafetería": venta de café, repostería y alimentos ligeros; opera para llevar, en el lugar o preordenes en línea
+      - "Barbería": cortes de cabello, venta de productos de cuidado personal; opera por citas o sin cita previa
+      - "Salón de belleza": servicios cosméticos, estilismo, venta de productos de belleza; opera por agenda de citas
+      - "Gimnasio": membresías, entrenamiento personal, venta de suplementos, clases grupales; opera por registro en recepción
+      - "Farmacia": venta de medicamentos con y sin receta, consulta médica; opera en tienda y a domicilio
+      - "Clínica dental": procedimientos dentales, ortodoncia; opera por agenda de citas y emergencias
+      - "Hospital": procedimientos médicos, hospitalización, urgencias, consultas externas; opera 24/7
+      - "Laboratorio": pruebas de diagnóstico médico, kits de detección; opera por cita o en clínicas de toma de muestras
+      - "Veterinaria": tratamientos para mascotas, vacunación, venta de alimento; opera por cita o urgencias animales
+      - "Despacho de abogados": igualas legales, consultoría jurídica por hora; opera por consultas y portales de clientes
+      - "Firma de contabilidad": preparación de impuestos, igualas mensuales de contabilidad; opera con software contable
+      - "Firma de auditoría": auditorías de cumplimiento, informes de evaluación de riesgos; opera con evaluaciones presenciales
+      - "Agencia inmobiliaria": comisiones por venta/renta de propiedades; opera por portales de listado y visitas guiadas
+      - "Coworking": membresías de escritorios compartidos y dedicados, renta de salas de juntas; opera por apps de reserva
+      - "Supermercado": venta de abarrotes al por menor y mayor; opera por cajas en tienda y entrega programada
+      - "Tienda": venta al por menor de productos generales; opera por mostradores de punto de venta
+      - "Boutique de moda": venta de ropa y accesorios personalizados; opera en tienda física y perfiles en línea
+      - "Ferretería": venta de herramientas y suministros, renta de equipo; opera por mostradores técnicos
+      - "Imprenta": producción de impresión por volumen, procesamiento de diseño gráfico; opera por envío digital y recogida
+      - "Servicios automotrices": reparación de autos, venta de refacciones; opera por bahías de servicio y diagnóstico digital
+      - "Constructora": contratos de construcción, cotización de planos civiles; opera por licitaciones y consultoría en sitio
+      - "Reparación de electrónicos": reparación de hardware, diagnóstico de dispositivos; opera por mostradores técnicos y envío
+      - "Venta de autos": venta y financiamiento de vehículos; opera en concesionarios y catálogos web
+      - "Agencia de viajes": paquetes vacacionales personalizados, seguros de viaje; opera por consultoría digital y telefónica
+      - "Salón de eventos": renta de espacios, catering por niveles; opera por visitas guiadas y reservación de fechas
+      - "Planeación de eventos": coordinación de eventos, gestión de proveedores; opera por portafolios y revisión digital
+      - "Estudio de Fotografía": sesiones fotográficas profesionales, venta de impresiones y activos digitales; opera por reserva de estudios
+
+      Si el negocio del usuario no corresponde exactamente a ningún tipo, selecciona el más cercano.
 
       IMPORTANTE:
+      - En el campo "reply", saluda al usuario, identifica su tipo de negocio con nombre específico si lo menciona, y anticipa
+        brevemente que le mostrarás los servicios digitales que más valor pueden aportar a su operación.
       - Responde EXCLUSIVAMENTE en español latinoamericano (LATAM) con tono profesional, cercano y empático.
       - Evita modismos de España (como "vosotros" o "vuestro").
-      - En tu respuesta, saluda al usuario, reconoce su tipo de negocio con nombre específico si lo menciona,
-        y anticipa brevemente que le mostrarás los servicios digitales más útiles para su industria.
     `;
 
   try {
-    // 2. Call the recommended general-purpose model
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: message,
       config: {
         systemInstruction: systemInstruction,
-        // 3. Enforce strict JSON structure via a schema map
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
@@ -52,35 +72,26 @@ export default defineEventHandler(async (event) => {
             reply: {
               type: Type.STRING,
               description:
-                "Una respuesta breve y personalizada reconociendo su industria en español LATAM.",
+                "Respuesta breve y personalizada en español LATAM reconociendo el negocio del usuario.",
             },
-            category: {
+            businessType: {
               type: Type.STRING,
-              enum: [
-                "alimentos",
-                "belleza",
-                "salud",
-                "profesional",
-                "comercio",
-                "industrial",
-                "eventos",
-                "movilidad",
-                "mas",
-              ],
+              enum: businessActivitiesMap.map((b) => b.businessName),
               description:
-                "El id de industria que mejor describe el negocio del usuario. Debe coincidir exactamente con una de las opciones del enum.",
+                "El tipo de negocio que mejor describe al usuario, tomado exactamente de la lista proporcionada.",
             },
           },
-          required: ["reply", "category"],
+          required: ["reply", "businessType"],
         },
       },
     });
 
-    // response.text is guaranteed to be a stringified JSON matching the schema rules
     const parsedResult = JSON.parse(response.text || "{}");
 
-    // 4. Extract services from your server/utils/servicesData layer
-    const matchedServices = servicesMap[parsedResult.category] || [];
+    const match = businessActivitiesMap.find(
+      (b) => b.businessName === parsedResult.businessType,
+    );
+    const matchedServices = match?.commonNeedings ?? [];
 
     return {
       reply: parsedResult.reply,

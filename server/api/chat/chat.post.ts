@@ -1,7 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { businessActivitiesMap } from "../../../utils/servicesData";
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_API_KEY = process.env.GOOGLE_API_KEY ?? process.env.GEMINI_API_KEY;
 
 export default defineEventHandler(async (event) => {
   const { message } = await readBody(event);
@@ -59,49 +59,68 @@ export default defineEventHandler(async (event) => {
       - Evita modismos de España (como "vosotros" o "vuestro").
     `;
 
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: message,
-      config: {
-        systemInstruction: systemInstruction,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            reply: {
-              type: Type.STRING,
-              description:
-                "Respuesta breve y personalizada en español LATAM reconociendo el negocio del usuario.",
-            },
-            businessType: {
-              type: Type.STRING,
-              enum: businessActivitiesMap.map((b) => b.businessName),
-              description:
-                "El tipo de negocio que mejor describe al usuario, tomado exactamente de la lista proporcionada.",
-            },
+  const generateConfig = {
+    model: "gemini-2.5-flash",
+    contents: message,
+    config: {
+      systemInstruction: systemInstruction,
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          reply: {
+            type: Type.STRING,
+            description:
+              "Respuesta breve y personalizada en español LATAM reconociendo el negocio del usuario.",
           },
-          required: ["reply", "businessType"],
+          businessType: {
+            type: Type.STRING,
+            enum: businessActivitiesMap.map((b) => b.businessName),
+            description:
+              "El tipo de negocio que mejor describe al usuario, tomado exactamente de la lista proporcionada.",
+          },
         },
+        required: ["reply", "businessType"],
       },
-    });
+    },
+  };
 
-    const parsedResult = JSON.parse(response.text || "{}");
+  const MAX_RETRIES = 3;
 
-    const match = businessActivitiesMap.find(
-      (b) => b.businessName === parsedResult.businessType,
-    );
-    const matchedServices = match?.commonNeedings ?? [];
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    try {
+      const response = await ai.models.generateContent(generateConfig);
 
-    return {
-      reply: parsedResult.reply,
-      services: matchedServices,
-    };
-  } catch (error) {
-    console.error("Gemini API Error:", error);
-    throw createError({
-      statusCode: 500,
-      statusMessage: "Failed processing Gemini content classification.",
-    });
+      const parsedResult = JSON.parse(response.text || "{}");
+
+      const match = businessActivitiesMap.find(
+        (b) => b.businessName === parsedResult.businessType,
+      );
+      const matchedServices = match?.commonNeedings ?? [];
+
+      return {
+        reply: parsedResult.reply,
+        services: matchedServices,
+      };
+    } catch (error: unknown) {
+      const is503 =
+        typeof error === "object" &&
+        error !== null &&
+        "status" in error &&
+        (error as { status: number }).status === 503;
+
+      if (is503 && attempt < MAX_RETRIES - 1) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, 1000 * 2 ** attempt),
+        );
+        continue;
+      }
+
+      console.error("Gemini API Error:", error);
+      throw createError({
+        statusCode: 500,
+        statusMessage: "Failed processing Gemini content classification.",
+      });
+    }
   }
 });

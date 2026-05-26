@@ -3,11 +3,11 @@
     <div class="header-container">
       <div class="header-flex">
         <div class="header-logo-wrapper">
-          <a href="/" class="header-logo">Digity</a>
+          <a href="/" class="header-logo">DIGITY</a>
         </div>
         <nav class="header-nav-desktop">
-          <a href="#servicios" class="header-nav-link">Servicios</a>
-          <a href="#contacto" class="header-nav-link">Contacto</a>
+          <!-- <a href="#servicios" class="header-nav-link">Servicios</a>
+          <a href="#contacto" class="header-nav-link">Contacto</a> -->
         </nav>
         <div class="header-mobile-toggle">
           <!-- Mobile menu button -->

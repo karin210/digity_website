@@ -898,9 +898,8 @@ export const allServices = [
       "Otro",
     ],
   },
-  { name: "Notificaciones", types: businessTypes },
   {
-    name: "Gestión de clientes",
+    name: "Perfiles de clientes",
     types: [
       "Barbería",
       "Salón de belleza",
@@ -929,7 +928,10 @@ export const allServices = [
     types: businessTypes,
   },
   { name: "Panel de administración", types: businessTypes },
-  { name: "Conexión con WhatsApp", types: businessTypes },
+  {
+    name: "Canales de directos de mensajería (WhatsApp, Messenger, Email)",
+    types: businessTypes,
+  },
   {
     name: "Citas en línea",
     types: [
@@ -990,7 +992,7 @@ export const allServices = [
     ],
   },
   {
-    name: "Inventario automático",
+    name: "Inventario automatizado",
     types: [
       "Supermercado",
       "Tienda",

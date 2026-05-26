@@ -38,7 +38,9 @@ import ChatbotSection from "~/components/ChatbotSection.vue";
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: clamp(4.5rem, 25dvh, 12rem);
+  overflow-y: auto;
 }
 
 .hero__bg {

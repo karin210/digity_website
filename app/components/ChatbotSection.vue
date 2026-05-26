@@ -86,7 +86,7 @@ async function sendChatMessage() {
 .chatbot {
   width: 85vw;
   max-width: min(85vw, 1000px);
-  background: #ffffff;
+  background: #ffffffed;
   padding: clamp(1rem, 4vw, 2rem);
   border-radius: clamp(0.65rem, 2vw, 1rem);
   box-shadow: 0 10px 30px var(--color-shadow);
@@ -203,11 +203,6 @@ async function sendChatMessage() {
   transition:
     transform 0.18s ease,
     box-shadow 0.18s ease;
-}
-
-.chatbot__service-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px var(--color-shadow);
 }
 
 @keyframes fadeIn {

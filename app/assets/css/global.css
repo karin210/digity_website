@@ -1,18 +1,18 @@
 :root {
-  --color-primary: #1d4ed8; /* Royal blue — CTAs, active states, logo, links */
-  --color-primary-dark: #1e3a8a; /* Deep navy — hover on primary elements */
-  --color-primary-light: #dbeafe; /* Soft blue — section backgrounds, filter boxes */
-  --color-secondary: #93c5fd; /* Sky blue — decorative accents */
-  --color-accent: #60a5fa; /* Medium blue — highlights, badges */
-  --color-text-dark: #0f172a; /* Near-black navy — primary text on light backgrounds */
-  --color-text-light: #eff6ff; /* Off-white blue — text on dark/primary-colored backgrounds */
+  --color-primary: #294187; /* Deep navy indigo — CTAs, active states, logo, links */
+  --color-primary-dark: #1c2e61; /* Darker navy — hover on primary elements */
+  --color-primary-light: #e8ecf7; /* Soft indigo tint — section backgrounds, filter boxes */
+  --color-secondary: #6b83c4; /* Mid indigo — decorative accents */
+  --color-accent: #4f6bbf; /* Medium indigo — highlights, badges */
+  --color-text-dark: #0d1428; /* Near-black navy — primary text on light backgrounds */
+  --color-text-light: #f0f4ff; /* Off-white indigo — text on dark/primary-colored backgrounds */
   --color-text-muted: #64748b; /* Slate — secondary text, descriptions, hints */
   --color-title-light: #fdfdfd; /* Hero headings overlaid on images */
-  --color-background: #eff6ff; /* Page background (subtle blue tint) */
-  --color-background-gradient-start: #dbeafe;
+  --color-background: #f0f3fb; /* Page background (subtle indigo tint) */
+  --color-background-gradient-start: #e8ecf7;
   --color-background-gradient-end: #ffffff;
-  --color-border: #bfdbfe; /* Input and card borders */
-  --color-shadow: rgba(29, 78, 216, 0.1); /* Soft blue-tinted drop shadows */
+  --color-border: #c5cee8; /* Input and card borders */
+  --color-shadow: rgba(41, 65, 135, 0.1); /* Soft indigo-tinted drop shadows */
   font-family: "Plus Jakarta Sans", sans-serif;
 }
 

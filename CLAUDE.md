@@ -52,20 +52,20 @@ All colors are defined as CSS custom properties on `:root` in `app/assets/css/gl
 
 | Token | Value | Usage |
 |---|---|---|
-| `--color-primary` | `#10b981` | Soft emerald — CTAs, active states, logo, links |
-| `--color-primary-dark` | `#047857` | Darker emerald — hover on primary elements |
-| `--color-primary-light` | `#d1fae5` | Light emerald — section backgrounds, filter boxes |
-| `--color-secondary` | `#6ee7b7` | Complementary emerald — decorative accents |
-| `--color-accent` | `#34d399` | Accent emerald — highlights, badges |
-| `--color-text-dark` | `#022c22` | Primary text on light backgrounds |
-| `--color-text-light` | `#f0fdf4` | Text on dark/primary-colored backgrounds |
-| `--color-text-muted` | `#6b7280` | Secondary text — descriptions, hints, placeholders |
+| `--color-primary` | `#294187` | Deep navy indigo — CTAs, active states, logo, links |
+| `--color-primary-dark` | `#1c2e61` | Darker navy — hover on primary elements |
+| `--color-primary-light` | `#e8ecf7` | Soft indigo tint — section backgrounds, filter boxes |
+| `--color-secondary` | `#6b83c4` | Mid indigo — decorative accents |
+| `--color-accent` | `#4f6bbf` | Medium indigo — highlights, badges |
+| `--color-text-dark` | `#0d1428` | Primary text on light backgrounds |
+| `--color-text-light` | `#f0f4ff` | Text on dark/primary-colored backgrounds |
+| `--color-text-muted` | `#64748b` | Secondary text — descriptions, hints, placeholders |
 | `--color-title-light` | `#fdfdfd` | Hero headings overlaid on images |
-| `--color-background` | `#f0fdf4` | Page background (light emerald tint) |
-| `--color-background-gradient-start` | `#ecfdf5` | Gradient start |
+| `--color-background` | `#f0f3fb` | Page background (subtle indigo tint) |
+| `--color-background-gradient-start` | `#e8ecf7` | Gradient start |
 | `--color-background-gradient-end` | `#ffffff` | Gradient end |
-| `--color-border` | `#a7f3d0` | Input and card borders |
-| `--color-shadow` | `rgba(16,185,129,0.1)` | Soft emerald-tinted drop shadows |
+| `--color-border` | `#c5cee8` | Input and card borders |
+| `--color-shadow` | `rgba(41,65,135,0.1)` | Soft indigo-tinted drop shadows |
 
 ## Imagery
 

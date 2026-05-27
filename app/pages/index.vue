@@ -32,38 +32,35 @@ import ChatbotSection from "~/components/ChatbotSection.vue";
 }
 
 .hero {
-  position: relative;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 1fr;
   width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding-top: clamp(4.5rem, 25dvh, 12rem);
+  height: 100dvh;
   overflow-y: auto;
 }
 
 .hero__bg {
-  position: absolute;
-  inset: 0;
+  grid-area: 1 / 1;
+  align-self: stretch;
+  min-height: 100dvh;
   width: 100%;
-  height: 100%;
   object-fit: cover;
   filter: brightness(0.6);
-  z-index: 0;
 }
 
 .hero__content {
   box-sizing: border-box;
+  grid-area: 1 / 1;
   position: relative;
   z-index: 1;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: clamp(1.5rem, 3vw, 2.5rem);
-  padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem);
+  padding: clamp(4.5rem, 25dvh, 12rem) clamp(1rem, 4vw, 2rem) clamp(2rem, 5vw, 4rem);
 }
 
 .hero__title {

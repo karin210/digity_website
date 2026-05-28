@@ -1,6 +1,62 @@
 <script setup lang="ts">
 // import HeroSlider from "~/components/HeroSlider.vue";
 import ChatbotSection from "~/components/ChatbotSection.vue";
+
+const title = "Digity — Desarrollo Web y Marketing Digital en Morelia";
+const description =
+  "Agencia de desarrollo web y marketing digital en Morelia, Michoacán. Sitios web profesionales, tiendas en línea, SEO y estrategias de marketing para hacer crecer tu negocio.";
+
+useSeoMeta({
+  title,
+  description,
+  ogTitle: title,
+  ogDescription: description,
+  ogType: "website",
+  ogUrl: "https://digity.com.mx",
+  ogLocale: "es_MX",
+  ogImage: "https://digity.com.mx/images/Morelia_background.jpg",
+  ogImageAlt: "Vista de Morelia, Michoacán — sede de Digity",
+  twitterCard: "summary_large_image",
+  twitterTitle: title,
+  twitterDescription: description,
+  twitterImage: "https://digity.com.mx/images/Morelia_background.jpg",
+});
+
+useHead({
+  link: [{ rel: "canonical", href: "https://digity.com.mx" }],
+  script: [
+    {
+      type: "application/ld+json",
+      innerHTML: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        name: "Digity",
+        description,
+        url: "https://digity.com.mx",
+        telephone: "+52-443-133-2455",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: "Morelia",
+          addressRegion: "Michoacán",
+          addressCountry: "MX",
+        },
+        areaServed: { "@type": "Country", name: "México" },
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: "Servicios digitales",
+          itemListElement: [
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Desarrollo Web" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Tienda en línea" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "SEO y posicionamiento" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Marketing Digital" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Manejo de redes sociales" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Google Ads" } },
+          ],
+        },
+      }),
+    },
+  ],
+});
 </script>
 
 <template>

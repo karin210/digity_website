@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // import HeroSlider from "~/components/HeroSlider.vue";
 import ChatbotSection from "~/components/ChatbotSection.vue";
+import PromoBanner from "~/components/PromoBanner.vue";
 
 const title = "Digity — Desarrollo Web y Marketing Digital en Morelia";
 const description =
@@ -68,6 +69,7 @@ useHead({
         alt="Vista de Morelia, Michoacán"
         class="hero__bg"
       />
+      <PromoBanner />
       <div class="hero__content">
         <h1 class="hero__title">Desarrollo Web y Marketing para tu compañía</h1>
         <ChatbotSection />
@@ -116,7 +118,7 @@ useHead({
   align-items: center;
   justify-content: flex-start;
   gap: clamp(1.5rem, 3vw, 2.5rem);
-  padding: clamp(4.5rem, 25dvh, 12rem) clamp(1rem, 4vw, 2rem) clamp(2rem, 5vw, 4rem);
+  padding: clamp(7.5rem, 25dvh, 12rem) clamp(1rem, 4vw, 2rem) clamp(2rem, 5vw, 4rem);
 }
 
 .hero__title {

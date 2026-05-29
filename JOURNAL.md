@@ -4,6 +4,16 @@ A chronological record of decisions, changes, and rationale made each working se
 
 ---
 
+## 2026-05-29 — Promo banner component
+
+Extracted the promotional offer ("30% de descuento en todos nuestros servicios hasta el 1 de julio") into its own `PromoBanner.vue` component and removed it from `HeroSlider.vue` (which is currently commented out in the index page anyway).
+
+`PromoBanner` is a full-width glassmorphism bar fixed directly below the main header (`top: 4rem`), acting as a secondary header. Frosted `backdrop-filter` blur over a `color-mix()` primary→primary-dark gradient, a light translucent bottom border, an emphasized `30%` figure, the offer detail, and the deadline (separator hidden under 600px so it wraps cleanly). Subtle slide-down animation (disabled under `prefers-reduced-motion`). All colors reference design tokens via `color-mix()` (no raw hex); sizing is fully fluid with `clamp()`.
+
+Imported it into `index.vue`; bumped the hero content's top padding to `clamp(7.5rem, …)` so the `h1` clears both the header and the promo bar on small screens (fixes the prior overlap).
+
+---
+
 ## 2026-05-29 — Email contact form in footer
 
 ### Feature: email-send modal in `Footer.vue`

@@ -4,6 +4,30 @@ A chronological record of decisions, changes, and rationale made each working se
 
 ---
 
+## 2026-05-29 — Email contact form in footer
+
+### Feature: email-send modal in `Footer.vue`
+
+Added an "Enviar email a hola@digity.com.mx" button to the footer that opens a native `<dialog>` modal. The modal contains two fields — **Asunto** and **Mensaje** — and submits the form to the Nitro API endpoint below. The form handles three states: `loading` (disables inputs and changes button label), `success` (hides the form actions and shows a confirmation message), and `error` (displays the server error message in a styled alert). On close the form resets to its initial state.
+
+### Feature: Nitro API endpoint `POST /api/email/send`
+
+New file `server/api/email/send.post.ts`. Validates that both `asunto` and `mensaje` are non-empty, then uses the **Resend** SDK (`resend` v6.12.4) to send the email from `noreply@digity.com.mx` to `hola@digity.com.mx`. Requires the `RESEND_API_KEY` environment variable; returns `400` on missing fields, `500` on missing API key, and `502` on a Resend SDK error.
+
+### Dependency: `resend` v6.12.4
+
+Added to `package.json` as a production dependency.
+
+### Convention: semicolons in JS/TS
+
+Added to **Project conventions** in `CLAUDE.md`: always end JS/TS statements with semicolons.
+
+### Convention: JOURNAL.md changelog entry before every commit
+
+Added to **Project conventions** in `CLAUDE.md` (and to the global `~/.claude/CLAUDE.md`): before every commit, add a short description of the changes to `JOURNAL.md`.
+
+---
+
 ## 2026-05-25 — Chatbot feature + project documentation
 
 ### Fix: TypeScript compilation error in `app/pages/index.vue`

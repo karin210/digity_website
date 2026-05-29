@@ -19,6 +19,8 @@ Website for Digity, a top tier web development agency in Mexico.
 ## Project conventions
 
 - TypeScript: explicit return types on all exported functions; no `any`
+- JavaScript/TypeScript: always end statements with semicolons
+- Changelog: before every commit, add a short description of the changes to `JOURNAL.md` in the working directory root
 - Accessibility: all UI components must meet WCAG 2.1 AA — semantic HTML elements, descriptive `alt` text, keyboard navigability, visible focus indicators, sufficient colour contrast
 - Layout: fluid design using `clamp()`, relative units (`rem`, `%`, `vw`/`vh`), and CSS custom properties; avoid fixed pixel widths for layout containers
 - Markup: use semantic HTML5 elements (`header`, `nav`, `main`, `section`, `article`, `footer`, etc.); never use `<div>` where a semantic element fits

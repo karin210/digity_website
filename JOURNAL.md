@@ -4,6 +4,12 @@ A chronological record of decisions, changes, and rationale made each working se
 
 ---
 
+## 2026-05-29 — Hero content offset below promo banner
+
+Replaced the hero content's top `padding` with `margin-top: 6.5rem` so `.hero__content` sits right below the fixed `PromoBanner` (header `4rem` + banner ~`2.5rem`). Kept the horizontal and bottom padding.
+
+---
+
 ## 2026-05-29 — Promo banner component
 
 Extracted the promotional offer ("30% de descuento en todos nuestros servicios hasta el 1 de julio") into its own `PromoBanner.vue` component and removed it from `HeroSlider.vue` (which is currently commented out in the index page anyway).

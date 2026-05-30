@@ -46,12 +46,36 @@ useHead({
           "@type": "OfferCatalog",
           name: "Servicios digitales",
           itemListElement: [
-            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Desarrollo Web" } },
-            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Tienda en línea" } },
-            { "@type": "Offer", itemOffered: { "@type": "Service", name: "SEO y posicionamiento" } },
-            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Marketing Digital" } },
-            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Manejo de redes sociales" } },
-            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Google Ads" } },
+            {
+              "@type": "Offer",
+              itemOffered: { "@type": "Service", name: "Desarrollo Web" },
+            },
+            {
+              "@type": "Offer",
+              itemOffered: { "@type": "Service", name: "Tienda en línea" },
+            },
+            {
+              "@type": "Offer",
+              itemOffered: {
+                "@type": "Service",
+                name: "SEO y posicionamiento",
+              },
+            },
+            {
+              "@type": "Offer",
+              itemOffered: { "@type": "Service", name: "Marketing Digital" },
+            },
+            {
+              "@type": "Offer",
+              itemOffered: {
+                "@type": "Service",
+                name: "Manejo de redes sociales",
+              },
+            },
+            {
+              "@type": "Offer",
+              itemOffered: { "@type": "Service", name: "Google Ads" },
+            },
           ],
         },
       }),
@@ -69,7 +93,6 @@ useHead({
         alt="Vista de Morelia, Michoacán"
         class="hero__bg"
       />
-      <PromoBanner />
       <div class="hero__content">
         <h1 class="hero__title">Desarrollo Web y Marketing para tu compañía</h1>
         <ChatbotSection />
@@ -84,7 +107,7 @@ useHead({
 }
 
 .page {
-  min-height: 100dvh;
+  min-height: 100vh;
   background-color: #fafafa;
   color: var(--color-text-dark);
 }
@@ -92,16 +115,15 @@ useHead({
 .hero {
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 100%;
   width: 100%;
-  height: 100dvh;
-  overflow-y: auto;
+  height: 100vh;
 }
 
 .hero__bg {
   grid-area: 1 / 1;
   align-self: stretch;
-  min-height: 100dvh;
+  min-height: 100vh;
   width: 100%;
   object-fit: cover;
   filter: brightness(0.6);
@@ -117,8 +139,10 @@ useHead({
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  overflow-y: scroll;
   gap: clamp(1.5rem, 3vw, 2.5rem);
-  padding: clamp(7.5rem, 25dvh, 12rem) clamp(1rem, 4vw, 2rem) clamp(2rem, 5vw, 4rem);
+  margin-top: 6.5rem;
+  padding: min(30%, 176px) clamp(1rem, 4vw, 2rem) clamp(2rem, 5vw, 4rem);
 }
 
 .hero__title {

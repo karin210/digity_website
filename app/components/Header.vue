@@ -5,6 +5,14 @@
         <div class="header-logo-wrapper">
           <a href="/" class="header-logo">DIGITY</a>
         </div>
+        <a
+          class="header-cta"
+          href="https://calendar.app.google/FCze9HJAwEusva2W6"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Consulta gratis
+        </a>
       </div>
     </div>
   </header>
@@ -44,6 +52,8 @@
 .header-flex {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
@@ -59,5 +69,30 @@
   font-weight: 700;
   color: var(--color-primary);
   text-decoration: none;
+}
+
+.header-cta {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 0.55rem 1.25rem;
+  font-size: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
+  font-weight: 600;
+  color: var(--color-text-light);
+  background-color: var(--color-primary);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.header-cta:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.header-cta:focus-visible {
+  outline: 2px solid var(--color-primary-dark);
+  outline-offset: 2px;
 }
 </style>

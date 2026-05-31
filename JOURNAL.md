@@ -4,6 +4,12 @@ A chronological record of decisions, changes, and rationale made each working se
 
 ---
 
+## 2026-05-31 — "Consulta gratis" CTA in header
+
+Added a "Consulta gratis" call-to-action button to `Header.vue`, placed opposite the logo (`.header-flex` now uses `justify-content: space-between`). It links to the Google Calendar booking page (`https://calendar.app.google/FCze9HJAwEusva2W6`) and opens in a new tab with `rel="noopener noreferrer"`. Styling uses design tokens (`--color-primary`, `--color-primary-dark`, `--color-text-light`), fluid `clamp()` font sizing, a hover state, and a visible `:focus-visible` outline for keyboard accessibility.
+
+---
+
 ## 2026-05-29 — Hero content offset below promo banner
 
 Replaced the hero content's top `padding` with `margin-top: 6.5rem` so `.hero__content` sits right below the fixed `PromoBanner` (header `4rem` + banner ~`2.5rem`). Kept the horizontal and bottom padding.

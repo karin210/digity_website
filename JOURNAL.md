@@ -4,6 +4,20 @@ A chronological record of decisions, changes, and rationale made each working se
 
 ---
 
+## 2026-05-31 — Fix footer displacement when chatbot service list appears
+
+The `.hero` section had a fixed `height: 100vh`. The hero is a grid with the background image and `.hero__content` stacked in the same cell. When the chatbot returns a reply and renders the service list, `.hero__content` needs more than one viewport, but the fixed-height grid couldn't grow — the overflowing content spilled past the hero's bottom edge and collided with the footer, displacing it. Changed `height: 100vh` to `min-height: 100vh` so the hero fills the screen when empty but grows with its content, pushing the footer down naturally. The background image (`align-self: stretch` + `object-fit: cover`) stretches to the taller row.
+
+---
+
+## 2026-05-31 — Fix hero content showing through fixed header
+
+The hero content was visible behind the fixed `Header` when scrolling because the header background was translucent (`#f6f6f6c2`, 76% opaque) and the whole page scrolls (the `100vh` hero slides up underneath it). The earlier `overflow-y: scroll` on `.hero__content` didn't help — it created a nested scroll container while the outer document kept scrolling, so the content still passed under the header.
+
+Fix: gave the header a frosted-glass background (`color-mix()` of `--color-background` at 80% + `backdrop-filter: blur(10px)`), matching the `PromoBanner` aesthetic, so content behind it is blurred rather than sharply visible. Removed the now-unnecessary `overflow-y: scroll` from `.hero__content`.
+
+---
+
 ## 2026-05-31 — "Consulta gratis" CTA in header
 
 Added a "Consulta gratis" call-to-action button to `Header.vue`, placed opposite the logo (`.header-flex` now uses `justify-content: space-between`). It links to the Google Calendar booking page (`https://calendar.app.google/FCze9HJAwEusva2W6`) and opens in a new tab with `rel="noopener noreferrer"`. Styling uses design tokens (`--color-primary`, `--color-primary-dark`, `--color-text-light`), fluid `clamp()` font sizing, a hover state, and a visible `:focus-visible` outline for keyboard accessibility.

@@ -117,7 +117,7 @@ useHead({
   display: grid;
   grid-template-columns: 100%;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .hero__bg {
@@ -139,7 +139,6 @@ useHead({
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  overflow-y: scroll;
   gap: clamp(1.5rem, 3vw, 2.5rem);
   margin-top: 6.5rem;
   padding: min(30%, 176px) clamp(1rem, 4vw, 2rem) clamp(2rem, 5vw, 4rem);

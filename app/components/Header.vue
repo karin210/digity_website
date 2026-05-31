@@ -20,7 +20,9 @@
 
 <style scoped>
 .header {
-  background-color: #f6f6f6c2;
+  background-color: color-mix(in srgb, var(--color-background) 80%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   position: fixed;
   top: 0;
   left: 0;

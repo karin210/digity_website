@@ -4,6 +4,12 @@ A chronological record of decisions, changes, and rationale made each working se
 
 ---
 
+## 2026-06-05 — Handle off-topic / invalid chatbot messages
+
+The classifier was forced to always pick the closest business type, so greetings, gibberish, off-topic questions, or prompt-injection attempts ("ignora tus instrucciones") would still return a confident — but wrong — business and its services. Added an explicit validity signal: the response schema now requires an `isBusinessRelated` boolean, and the system instruction tells the model to first judge whether the message actually describes a business. When it isn't business-related the model returns a friendly Spanish reply inviting the user to describe their business, and the handler skips the service lookup so no services are shown. No client change was needed — `ChatbotSection.vue` already renders the reply and only lists services when `services.length > 0`. Stays within a single Gemini round-trip.
+
+---
+
 ## 2026-06-05 — Add request limits to the chatbot
 
 The chatbot called Gemini on every request with no guardrails, so a visitor (or a script) could spam the endpoint and run up API costs. Added two layers of protection. Server-side (the real protection, can't be bypassed): a new in-memory per-IP rate limiter in `server/utils/rateLimit.ts` that throws a 429 once a client exceeds 10 requests in a 10-minute window, plus a 500-character max-length check on the message and stricter type validation in `chat.post.ts`. Client-side (UX): `ChatbotSection.vue` now caps a browser session at 10 messages, disables the input/button when the cap (or a 429) is hit, enforces `maxlength` on the field, and shows a friendly Spanish notice inviting the visitor to contact the team directly.

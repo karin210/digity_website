@@ -1,15 +1,35 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { businessActivitiesMap } from "../../../utils/servicesData";
+import { enforceRateLimit } from "../../utils/rateLimit";
 
 const GEMINI_API_KEY = process.env.GOOGLE_API_KEY ?? process.env.GEMINI_API_KEY;
 
+/** Maximum number of chat requests allowed per client within the window. */
+const RATE_LIMIT = 10;
+/** Rolling rate-limit window: 10 minutes. */
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+/** Maximum accepted length of a user message, in characters. */
+const MAX_MESSAGE_LENGTH = 500;
+
 export default defineEventHandler(async (event) => {
+  enforceRateLimit(event, {
+    limit: RATE_LIMIT,
+    windowMs: RATE_LIMIT_WINDOW_MS,
+  });
+
   const { message } = await readBody(event);
 
-  if (!message) {
+  if (typeof message !== "string" || !message.trim()) {
     throw createError({
       statusCode: 400,
       statusMessage: "Message body is missing parameters.",
+    });
+  }
+
+  if (message.length > MAX_MESSAGE_LENGTH) {
+    throw createError({
+      statusCode: 413,
+      statusMessage: `El mensaje no puede exceder ${MAX_MESSAGE_LENGTH} caracteres.`,
     });
   }
 

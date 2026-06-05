@@ -4,6 +4,12 @@ A chronological record of decisions, changes, and rationale made each working se
 
 ---
 
+## 2026-06-05 — Add request limits to the chatbot
+
+The chatbot called Gemini on every request with no guardrails, so a visitor (or a script) could spam the endpoint and run up API costs. Added two layers of protection. Server-side (the real protection, can't be bypassed): a new in-memory per-IP rate limiter in `server/utils/rateLimit.ts` that throws a 429 once a client exceeds 10 requests in a 10-minute window, plus a 500-character max-length check on the message and stricter type validation in `chat.post.ts`. Client-side (UX): `ChatbotSection.vue` now caps a browser session at 10 messages, disables the input/button when the cap (or a 429) is hit, enforces `maxlength` on the field, and shows a friendly Spanish notice inviting the visitor to contact the team directly.
+
+---
+
 ## 2026-05-31 — Fix footer displacement when chatbot service list appears
 
 The `.hero` section had a fixed `height: 100vh`. The hero is a grid with the background image and `.hero__content` stacked in the same cell. When the chatbot returns a reply and renders the service list, `.hero__content` needs more than one viewport, but the fixed-height grid couldn't grow — the overflowing content spilled past the hero's bottom edge and collided with the footer, displacing it. Changed `height: 100vh` to `min-height: 100vh` so the hero fills the screen when empty but grows with its content, pushing the footer down naturally. The background image (`align-self: stretch` + `object-fit: cover`) stretches to the taller row.

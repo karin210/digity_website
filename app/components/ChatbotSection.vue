@@ -1,13 +1,25 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
+
+/** Maximum messages a visitor can send per browser session. */
+const MAX_MESSAGES_PER_SESSION = 10;
+/** Maximum length of a single message (kept in sync with the server). */
+const MAX_MESSAGE_LENGTH = 500;
 
 const chatMessage = ref("");
 const chatReply = ref("");
 const chatServices = ref<string[]>([]);
 const chatLoading = ref(false);
+const messageCount = ref(0);
 
-async function sendChatMessage() {
-  if (!chatMessage.value.trim() || chatLoading.value) return;
+const limitReached = computed(
+  () => messageCount.value >= MAX_MESSAGES_PER_SESSION,
+);
+
+async function sendChatMessage(): Promise<void> {
+  if (!chatMessage.value.trim() || chatLoading.value || limitReached.value) {
+    return;
+  }
 
   chatLoading.value = true;
   chatReply.value = "";
@@ -23,9 +35,21 @@ async function sendChatMessage() {
     );
     chatReply.value = response.reply;
     chatServices.value = response.services;
-  } catch {
-    chatReply.value =
-      "Ocurrió un error al procesar tu mensaje. Por favor, intenta de nuevo.";
+    messageCount.value += 1;
+  } catch (error: unknown) {
+    const statusCode =
+      typeof error === "object" && error !== null && "statusCode" in error
+        ? (error as { statusCode: number }).statusCode
+        : undefined;
+
+    if (statusCode === 429) {
+      chatReply.value =
+        "Has enviado demasiados mensajes en poco tiempo. Por favor, espera unos minutos antes de intentar de nuevo.";
+      messageCount.value = MAX_MESSAGES_PER_SESSION;
+    } else {
+      chatReply.value =
+        "Ocurrió un error al procesar tu mensaje. Por favor, intenta de nuevo.";
+    }
   } finally {
     chatLoading.value = false;
   }
@@ -46,16 +70,22 @@ async function sendChatMessage() {
           class="chatbot__input"
           type="text"
           placeholder="Ejemplo: Tengo una barbería en Monterrey..."
-          :disabled="chatLoading"
+          :maxlength="MAX_MESSAGE_LENGTH"
+          :disabled="chatLoading || limitReached"
         />
         <button
           class="chatbot__send-btn"
-          :disabled="chatLoading || !chatMessage.trim()"
+          :disabled="chatLoading || limitReached || !chatMessage.trim()"
           @click="sendChatMessage"
         >
           {{ chatLoading ? "..." : "Enviar" }}
         </button>
       </div>
+
+      <p v-if="limitReached" class="chatbot__limit-notice" role="status">
+        Has alcanzado el límite de mensajes de esta sesión. Si necesitas más
+        ayuda, escríbenos directamente y con gusto te atendemos.
+      </p>
 
       <div v-if="chatReply" class="chatbot__response">
         <p class="chatbot__reply">{{ chatReply }}</p>
@@ -155,6 +185,13 @@ async function sendChatMessage() {
 .chatbot__send-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.chatbot__limit-notice {
+  margin: clamp(0.75rem, 2vw, 1rem) 0 0;
+  font-size: clamp(0.85rem, 2vw, 0.95rem);
+  color: var(--color-text-muted);
+  text-align: center;
 }
 
 .chatbot__response {

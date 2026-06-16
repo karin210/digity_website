@@ -6,7 +6,7 @@ const props = defineProps<{
   mode: "login" | "register";
 }>();
 
-const { register, login } = useAuth();
+const { register, login, loginWithGoogle, isAuthenticated } = useAuth();
 
 const name = ref("");
 const email = ref("");
@@ -48,6 +48,28 @@ async function handleSubmit(): Promise<void> {
       await login(email.value, password.value);
     }
     await navigateTo("/account");
+  } catch (error: unknown) {
+    errorMessage.value =
+      error instanceof Error
+        ? error.message
+        : "Ocurrió un error. Por favor, intenta de nuevo.";
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function handleGoogle(): Promise<void> {
+  if (loading.value) {
+    return;
+  }
+  errorMessage.value = "";
+
+  loading.value = true;
+  try {
+    await loginWithGoogle();
+    if (isAuthenticated.value) {
+      await navigateTo("/account");
+    }
   } catch (error: unknown) {
     errorMessage.value =
       error instanceof Error
@@ -131,6 +153,43 @@ async function handleSubmit(): Promise<void> {
 
       <button class="auth__submit" type="submit" :disabled="loading">
         {{ loading ? "Procesando..." : submitLabel }}
+      </button>
+
+      <div class="auth__divider" role="separator" aria-hidden="true">
+        <span class="auth__divider-text">o</span>
+      </div>
+
+      <button
+        class="auth__google"
+        type="button"
+        :disabled="loading"
+        @click="handleGoogle"
+      >
+        <svg
+          class="auth__google-icon"
+          viewBox="0 0 18 18"
+          width="18"
+          height="18"
+          aria-hidden="true"
+        >
+          <path
+            fill="#4285F4"
+            d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z"
+          />
+          <path
+            fill="#34A853"
+            d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z"
+          />
+          <path
+            fill="#FBBC05"
+            d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.997 8.997 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332Z"
+          />
+          <path
+            fill="#EA4335"
+            d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58Z"
+          />
+        </svg>
+        Continuar con Google
       </button>
 
       <p class="auth__switch">
@@ -264,6 +323,67 @@ async function handleSubmit(): Promise<void> {
 .auth__submit:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.auth__divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.25rem 0;
+  color: var(--color-text-muted);
+}
+
+.auth__divider::before,
+.auth__divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.auth__divider-text {
+  font-size: clamp(0.78rem, 1.6vw, 0.85rem);
+  text-transform: lowercase;
+}
+
+.auth__google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  padding: 0.7rem 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background: #ffffff;
+  color: var(--color-text-dark);
+  font-family: inherit;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.auth__google:hover:not(:disabled) {
+  background: var(--color-background);
+  border-color: var(--color-secondary);
+}
+
+.auth__google:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.auth__google:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth__google-icon {
+  flex-shrink: 0;
 }
 
 .auth__switch {

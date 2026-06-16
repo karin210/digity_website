@@ -4,6 +4,18 @@ A chronological record of decisions, changes, and rationale made each working se
 
 ---
 
+## 2026-06-16 — Fix COOP blocking Google popup sign-in
+
+Google sign-in failed with "Cross-Origin-Opener-Policy policy would block the window.closed call". Firebase's `signInWithPopup` polls `popup.closed` to detect when the user finishes, which the browser blocks under the default COOP. Set `Cross-Origin-Opener-Policy: same-origin-allow-popups` both via Nitro `routeRules` (production/SSR responses) and the Vite dev-server `headers` (local `nuxi dev`) so the opener keeps its reference to the popup. Requires restarting the dev server to take effect.
+
+---
+
+## 2026-06-16 — Add "Sign in with Google" to auth flow
+
+Added Google as a second sign-in option alongside email/password. The `useAuth` composable now exposes `loginWithGoogle`, which uses Firebase's `GoogleAuthProvider` + `signInWithPopup`; popup cancellations (`auth/popup-closed-by-user`, `auth/cancelled-popup-request`, `auth/user-cancelled`) resolve silently rather than surfacing an error, and new error codes (`auth/account-exists-with-different-credential`, `auth/popup-blocked`) get friendly Spanish messages. The shared `AuthForm.vue` (used by both `/login` and `/register`) gained an "o" divider and a "Continuar con Google" button with the multicolor Google `G` SVG mark; it navigates to `/account` only when sign-in actually completes. Requires the Google provider to be enabled in the Firebase console.
+
+---
+
 ## 2026-06-10 — Add client accounts with Firebase Auth (login/register/account)
 
 Added an email + password authentication system so clients can create accounts and sign in. Chose Firebase Auth as the backend (handles account creation, password hashing, brute-force protection) over rolling our own, since there's no database in the project. A `.client`-only Nuxt plugin (`app/plugins/firebase.client.ts`) initializes the Firebase Web SDK from `runtimeConfig.public.firebase` (populated by `NUXT_PUBLIC_FIREBASE_*` env vars — these web keys are safe to expose) and keeps the current user + an `authReady` flag in shared `useState`. The `useAuth` composable (`app/composables/useAuth.ts`) exposes reactive `user`/`isAuthenticated` plus `register`/`login`/`logout`, mapping Firebase error codes to friendly Spanish messages (including `auth/operation-not-allowed` / `auth/admin-restricted-operation`, so a disabled Email/Password provider surfaces a clear message instead of a generic one). A shared `AuthForm.vue` component (mode `login` | `register`) powers the new `/login` and `/register` pages; `/account` shows the signed-in client's name/email with a logout button. Two route middlewares gate access: `auth` redirects guests away from `/account`, `guest` redirects signed-in users away from the auth pages — both wait for `authReady` so they don't act on unresolved state. The header now shows "Iniciar sesión" or "Mi cuenta" depending on auth state, wrapped in `<ClientOnly>` to avoid hydration mismatch. Auth pages are marked `noindex`. Requires the real Firebase web config to be filled into `.env`.

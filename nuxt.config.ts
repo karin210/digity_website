@@ -41,6 +41,20 @@ export default defineNuxtConfig({
   vite: {
     server: {
       allowedHosts: ["7e00-206-85-11-81.ngrok-free.app"],
+      headers: {
+        "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
+      },
+    },
+  },
+
+  // Firebase's signInWithPopup polls `popup.closed`, which the browser blocks
+  // under the default Cross-Origin-Opener-Policy. `same-origin-allow-popups`
+  // keeps the opener's reference to popups it opens so Google sign-in works.
+  routeRules: {
+    "/**": {
+      headers: {
+        "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
+      },
     },
   },
 

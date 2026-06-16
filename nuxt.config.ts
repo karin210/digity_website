@@ -22,6 +22,22 @@ export default defineNuxtConfig({
     },
   },
 
+  runtimeConfig: {
+    public: {
+      // Firebase web config — populated from NUXT_PUBLIC_FIREBASE_* env vars.
+      // These keys are safe to expose to the client; access is controlled by
+      // Firebase Security Rules and the authorized-domains list, not secrecy.
+      firebase: {
+        apiKey: "",
+        authDomain: "",
+        projectId: "",
+        storageBucket: "",
+        messagingSenderId: "",
+        appId: "",
+      },
+    },
+  },
+
   vite: {
     server: {
       allowedHosts: ["7e00-206-85-11-81.ngrok-free.app"],

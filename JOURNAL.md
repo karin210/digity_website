@@ -4,6 +4,12 @@ A chronological record of decisions, changes, and rationale made each working se
 
 ---
 
+## 2026-06-10 — Add client accounts with Firebase Auth (login/register/account)
+
+Added an email + password authentication system so clients can create accounts and sign in. Chose Firebase Auth as the backend (handles account creation, password hashing, brute-force protection) over rolling our own, since there's no database in the project. A `.client`-only Nuxt plugin (`app/plugins/firebase.client.ts`) initializes the Firebase Web SDK from `runtimeConfig.public.firebase` (populated by `NUXT_PUBLIC_FIREBASE_*` env vars — these web keys are safe to expose) and keeps the current user + an `authReady` flag in shared `useState`. The `useAuth` composable (`app/composables/useAuth.ts`) exposes reactive `user`/`isAuthenticated` plus `register`/`login`/`logout`, mapping Firebase error codes to friendly Spanish messages (including `auth/operation-not-allowed` / `auth/admin-restricted-operation`, so a disabled Email/Password provider surfaces a clear message instead of a generic one). A shared `AuthForm.vue` component (mode `login` | `register`) powers the new `/login` and `/register` pages; `/account` shows the signed-in client's name/email with a logout button. Two route middlewares gate access: `auth` redirects guests away from `/account`, `guest` redirects signed-in users away from the auth pages — both wait for `authReady` so they don't act on unresolved state. The header now shows "Iniciar sesión" or "Mi cuenta" depending on auth state, wrapped in `<ClientOnly>` to avoid hydration mismatch. Auth pages are marked `noindex`. Requires the real Firebase web config to be filled into `.env`.
+
+---
+
 ## 2026-06-05 — Handle off-topic / invalid chatbot messages
 
 The classifier was forced to always pick the closest business type, so greetings, gibberish, off-topic questions, or prompt-injection attempts ("ignora tus instrucciones") would still return a confident — but wrong — business and its services. Added an explicit validity signal: the response schema now requires an `isBusinessRelated` boolean, and the system instruction tells the model to first judge whether the message actually describes a business. When it isn't business-related the model returns a friendly Spanish reply inviting the user to describe their business, and the handler skips the service lookup so no services are shown. No client change was needed — `ChatbotSection.vue` already renders the reply and only lists services when `services.length > 0`. Stays within a single Gemini round-trip.

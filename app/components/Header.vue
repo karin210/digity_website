@@ -1,19 +1,42 @@
+<script setup lang="ts">
+const { isAuthenticated } = useAuth();
+</script>
+
 <template>
   <header class="header">
     <div class="header-container">
-      <div class="header-flex">
+      <nav class="header-flex" aria-label="Navegación principal">
         <div class="header-logo-wrapper">
-          <a href="/" class="header-logo">DIGITY</a>
+          <NuxtLink to="/" class="header-logo">DIGITY</NuxtLink>
         </div>
-        <a
-          class="header-cta"
-          href="https://calendar.app.google/FCze9HJAwEusva2W6"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Consulta gratis
-        </a>
-      </div>
+        <div class="header-actions">
+          <ClientOnly>
+            <NuxtLink
+              v-if="isAuthenticated"
+              class="header-account"
+              to="/account"
+            >
+              Mi cuenta
+            </NuxtLink>
+            <NuxtLink v-else class="header-account" to="/login">
+              Iniciar sesión
+            </NuxtLink>
+            <template #fallback>
+              <NuxtLink class="header-account" to="/login">
+                Iniciar sesión
+              </NuxtLink>
+            </template>
+          </ClientOnly>
+          <a
+            class="header-cta"
+            href="https://calendar.app.google/FCze9HJAwEusva2W6"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Consulta gratis
+          </a>
+        </div>
+      </nav>
     </div>
   </header>
 </template>
@@ -63,6 +86,32 @@
 .header-logo-wrapper {
   display: flex;
   align-items: center;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.6rem, 2vw, 1.25rem);
+}
+
+.header-account {
+  white-space: nowrap;
+  font-size: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.header-account:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
+}
+
+.header-account:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 .header-logo {

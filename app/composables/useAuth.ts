@@ -40,7 +40,7 @@ function authErrorMessage(error: unknown): string {
     case "auth/invalid-credential":
     case "auth/wrong-password":
     case "auth/user-not-found":
-      return "Correo electrónico o contraseña incorrectos.";
+      return "No se encontró este usuario. Por favor revisa el correo y la contraseña e intenta de nuevo.";
     case "auth/operation-not-allowed":
     case "auth/admin-restricted-operation":
       return "El registro con correo y contraseña no está habilitado. Contacta al administrador.";

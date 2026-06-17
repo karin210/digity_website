@@ -15,7 +15,47 @@ const confirmPassword = ref("");
 const errorMessage = ref("");
 const loading = ref(false);
 
+const emailInput = ref<HTMLInputElement | null>(null);
+const emailError = ref("");
+
+/**
+ * Validates the email field on focus out using the input's native
+ * constraint validation, surfacing an on-brand Spanish message. An empty
+ * field is left untouched so the user is not nagged before typing.
+ */
+function validateEmail(): void {
+  const input = emailInput.value;
+  if (!input || email.value === "") {
+    emailError.value = "";
+    return;
+  }
+  emailError.value = input.validity.typeMismatch
+    ? "Ingresa un correo electrónico válido."
+    : "";
+}
+
 const isRegister = computed<boolean>(() => props.mode === "register");
+
+/** Mirrors the `type="email"` + `minlength="6"` input constraints. */
+const isEmailValid = computed<boolean>(() =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value),
+);
+const isPasswordValid = computed<boolean>(() => password.value.length >= 6);
+
+/**
+ * Whether every required field for the current mode holds valid data. Drives
+ * both the submit button's disabled state and a guard in `handleSubmit`, so no
+ * request is ever sent with incomplete or malformed input.
+ */
+const isFormValid = computed<boolean>(() => {
+  if (!isEmailValid.value || !isPasswordValid.value) {
+    return false;
+  }
+  if (isRegister.value) {
+    return name.value.trim() !== "" && confirmPassword.value === password.value;
+  }
+  return true;
+});
 
 const heading = computed<string>(() =>
   isRegister.value ? "Crea tu cuenta" : "Inicia sesión",
@@ -30,7 +70,7 @@ const submitLabel = computed<string>(() =>
 );
 
 async function handleSubmit(): Promise<void> {
-  if (loading.value) {
+  if (loading.value || !isFormValid.value) {
     return;
   }
   errorMessage.value = "";
@@ -105,14 +145,28 @@ async function handleGoogle(): Promise<void> {
         <label class="auth__label" for="auth-email">Correo electrónico</label>
         <input
           id="auth-email"
+          ref="emailInput"
           v-model="email"
           class="auth__input"
+          :class="{ 'auth__input--invalid': emailError }"
           type="email"
           autocomplete="email"
           placeholder="tucorreo@ejemplo.com"
           required
           :disabled="loading"
+          :aria-invalid="emailError ? 'true' : undefined"
+          :aria-describedby="emailError ? 'auth-email-error' : undefined"
+          @blur="validateEmail"
+          @input="emailError = ''"
         />
+        <p
+          v-if="emailError"
+          id="auth-email-error"
+          class="auth__field-error"
+          role="alert"
+        >
+          {{ emailError }}
+        </p>
       </div>
 
       <div class="auth__field">
@@ -151,7 +205,11 @@ async function handleGoogle(): Promise<void> {
         {{ errorMessage }}
       </p>
 
-      <button class="auth__submit" type="submit" :disabled="loading">
+      <button
+        class="auth__submit"
+        type="submit"
+        :disabled="loading || !isFormValid"
+      >
         {{ loading ? "Procesando..." : submitLabel }}
       </button>
 
@@ -282,6 +340,21 @@ async function handleGoogle(): Promise<void> {
 .auth__input:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.auth__input--invalid {
+  border-color: #b42318;
+  background: #fef3f2;
+}
+
+.auth__input--invalid:focus {
+  outline-color: #b42318;
+}
+
+.auth__field-error {
+  margin: 0;
+  font-size: clamp(0.78rem, 1.6vw, 0.85rem);
+  color: #b42318;
 }
 
 .auth__error {

@@ -4,6 +4,30 @@ A chronological record of decisions, changes, and rationale made each working se
 
 ---
 
+## 2026-06-17 — Wire up Firebase Auth emulator for local development
+
+Added Firebase emulator config (`firebase.json` with the Auth emulator on port 9099 plus the Emulator UI on 4000, and `.firebaserc` pinning the `digity-277d4` project). The client plugin (`firebase.client.ts`) now calls `connectAuthEmulator` against `http://127.0.0.1:9099` when `import.meta.dev` is true, so local sign-in/registration runs against the emulator instead of the live project; the branch is statically stripped from production builds, and `disableWarnings` silences the emulator's insecure-connection banner.
+
+---
+
+## 2026-06-17 — Clarify failed sign-in error message
+
+Reworded the `auth/invalid-credential` / `auth/wrong-password` / `auth/user-not-found` message in `useAuth.ts` from "Correo electrónico o contraseña incorrectos." to "No se encontró este usuario. Por favor revisa el correo y la contraseña e intenta de nuevo." for friendlier, clearer guidance.
+
+---
+
+## 2026-06-17 — Validate auth email field on blur
+
+The shared `AuthForm.vue` now validates the email field on focus out. A `validateEmail` handler reads the input's native constraint validation (`validity.typeMismatch` from `type="email"`) and surfaces an on-brand Spanish message inline below the field instead of using the native `reportValidity()` bubble, keeping it consistent with the existing error styling and the Spanish user-facing copy rule. An empty field is left untouched (no nagging), the message clears as soon as the user edits, and the field exposes `aria-invalid` / `aria-describedby` for accessibility plus a red invalid border state.
+
+---
+
+## 2026-06-17 — Disable auth submit until required fields are valid
+
+Added an `isFormValid` computed to `AuthForm.vue` that mirrors the inputs' constraints (valid email, password ≥ 6 chars, and — in register mode — a non-empty name plus matching confirmation). The submit button is now `:disabled` whenever the form is invalid (or loading), and `handleSubmit` early-returns on `!isFormValid`, so no auth request is sent while fields are incomplete or malformed. The Google button is unaffected since it doesn't rely on form fields.
+
+---
+
 ## 2026-06-16 — Fix COOP blocking Google popup sign-in
 
 Google sign-in failed with "Cross-Origin-Opener-Policy policy would block the window.closed call". Firebase's `signInWithPopup` polls `popup.closed` to detect when the user finishes, which the browser blocks under the default COOP. Set `Cross-Origin-Opener-Policy: same-origin-allow-popups` both via Nitro `routeRules` (production/SSR responses) and the Vite dev-server `headers` (local `nuxi dev`) so the opener keeps its reference to the popup. Requires restarting the dev server to take effect.

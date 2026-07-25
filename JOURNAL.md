@@ -4,6 +4,16 @@ A chronological record of decisions, changes, and rationale made each working se
 
 ---
 
+## 2026-07-09 — Add spec-first validation tests for the login refactor
+
+Added `tests/loginValidation.spec.ts` describing the field-validation behaviour the login page should expose once the planned refactor lands: the submit button stays disabled until required fields are valid, and each field surfaces its helper/error message on blur, clearing it again on valid input.
+
+These tests are written ahead of the implementation and **do not pass yet**. They target selectors (`#login-email`, `#login-password`, `#login-name`, `.login-card__switch-button`, `.login-form__submit`, `.login-field__helper`) that no component currently renders — the current markup lives in the shared `AuthForm.vue`. Running them also requires test tooling that is not yet a dependency (`vitest`, `@nuxt/test-utils`), and there is no `test` script or `vitest.config.ts`.
+
+`login-refactor.md` captures the scope they are written against: delete `app/pages/register.vue` and split the shared form into dedicated sign-in and sign-up components imported by the login page.
+
+---
+
 ## 2026-06-17 — Wire up Firebase Auth emulator for local development
 
 Added Firebase emulator config (`firebase.json` with the Auth emulator on port 9099 plus the Emulator UI on 4000, and `.firebaserc` pinning the `digity-277d4` project). The client plugin (`firebase.client.ts`) now calls `connectAuthEmulator` against `http://127.0.0.1:9099` when `import.meta.dev` is true, so local sign-in/registration runs against the emulator instead of the live project; the branch is statically stripped from production builds, and `disableWarnings` silences the emulator's insecure-connection banner.

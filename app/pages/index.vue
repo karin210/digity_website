@@ -1,7 +1,6 @@
 <script setup lang="ts">
 // import HeroSlider from "~/components/HeroSlider.vue";
 import ChatbotSection from "~/components/ChatbotSection.vue";
-import PromoBanner from "~/components/PromoBanner.vue";
 
 const title = "Digity — Desarrollo Web y Marketing Digital en Morelia";
 const description =

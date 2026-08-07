@@ -4,6 +4,12 @@ A chronological record of decisions, changes, and rationale made each working se
 
 ---
 
+## 2026-08-07 — Fix production build failure from stale PromoBanner import
+
+`app/pages/index.vue` still imported `PromoBanner.vue` after the component file was deleted, which passed locally (cached build) but broke Vercel's clean production build with `ENOENT: no such file or directory`. Removed the leftover import.
+
+---
+
 ## 2026-07-09 — Add spec-first validation tests for the login refactor
 
 Added `tests/loginValidation.spec.ts` describing the field-validation behaviour the login page should expose once the planned refactor lands: the submit button stays disabled until required fields are valid, and each field surfaces its helper/error message on blur, clearing it again on valid input.
